@@ -10,7 +10,7 @@ export function Navigation() {
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-gradient-to-r from-white/75 via-[#f8f7da]/75 to-white/75 backdrop-blur-md border-b">
+    <header className="fixed top-0 w-full z-50 bg-gradient-to-r from-white via-[#f8f7da] to-white backdrop-blur-md border-b">
       <div 
         className="absolute inset-0 -z-10 opacity-15"
         style={{
@@ -74,40 +74,44 @@ export function Navigation() {
       {/* Mobile Menu */}
       <div
         className={cn(
-          "fixed inset-0 top-16 bg-gradient-to-b from-white to-[#f8f7da] z-50 md:hidden transition-transform duration-300",
+          "fixed inset-0 top-16 bg-white shadow-lg z-50 md:hidden transition-transform duration-300",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
         <div className="flex flex-col p-4 space-y-4">
           <Link
             href="/"
-            className="text-lg font-medium text-[#010001] hover:text-[#f45201]"
+            className="text-lg font-medium text-gray-800 hover:text-blue-600"
             onClick={() => setIsOpen(false)}
           >
             Home
           </Link>
           <Link
             href="/about"
-            className="text-lg font-medium text-[#010001] hover:text-[#f45201]"
+            className="text-lg font-medium text-gray-800 hover:text-blue-600"
             onClick={() => setIsOpen(false)}
           >
             About
           </Link>
           <Link
             href="/packages"
-            className="text-lg font-medium text-[#010001] hover:text-[#f45201]"
+            className="text-lg font-medium text-gray-800 hover:text-blue-600"
             onClick={() => setIsOpen(false)}
           >
             Packages
           </Link>
           <Link
             href="/contact"
-            className="text-lg font-medium text-[#010001] hover:text-[#f45201]"
+            className="text-lg font-medium text-gray-800 hover:text-blue-600"
             onClick={() => setIsOpen(false)}
           >
             Contact
           </Link>
-          <Link href="/booking" className="gradient-button w-full text-center">
+          <Link 
+            href="/booking" 
+            className="gradient-button w-full text-center"
+            onClick={() => setIsOpen(false)}
+          >
             Book Now
           </Link>
         </div>
