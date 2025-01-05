@@ -79,7 +79,7 @@ const vehicles = [
   },
   {
     name: "Range Rover",
-    image: "https://images.unsplash.com/photo-1536578617306-7e8bd8b6e981",
+    image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6",
     description: "Luxury all-terrain vehicle"
   }
 ]

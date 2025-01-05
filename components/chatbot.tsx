@@ -20,7 +20,7 @@ export function Chatbot() {
     <div className="fixed bottom-4 right-4 z-50">
       <Button
         size="icon"
-        className="h-12 w-12 rounded-full bg-[#f45201] hover:bg-[#f45201]/90"
+        className="h-12 w-12 rounded-full gradientt-button"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X /> : <MessageCircle />}
@@ -45,7 +45,7 @@ export function Chatbot() {
         <CardFooter>
           <form className="flex w-full gap-2">
             <Input placeholder="Type your message..." />
-            <Button type="submit" size="sm" className="bg-[#f45201] hover:bg-[#f45201]/90">
+            <Button type="submit" size="sm" className="gradient-button">
               Send
             </Button>
           </form>

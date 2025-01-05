@@ -4,6 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from "@/lib/utils"
+import { useCallback, useEffect } from "react"
 
 interface Slide {
   url: string
@@ -24,19 +25,19 @@ export function Carousel({ slides }: CarouselProps) {
     setCurrentIndex(newIndex)
   }
 
-  const nextSlide = () => {
-    const isLastSlide = currentIndex === slides.length - 1
-    const newIndex = isLastSlide ? 0 : currentIndex + 1
-    setCurrentIndex(newIndex)
-  }
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === slides.length - 1 ? 0 : prevIndex + 1
+    );
+  }, [slides.length]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setInterval(() => {
-      nextSlide()
-    }, 3000)
+      nextSlide();
+    }, 3000);
 
-    return () => clearInterval(timer)
-  }, [nextSlide])
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   return (
     <div className="h-full w-full relative group">

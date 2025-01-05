@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Facebook, Instagram, Twitter } from 'lucide-react'
+import Image from "next/image"
+import { Facebook, Instagram, Twitter, Heart } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -7,10 +8,21 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">Maple Tours</h3>
-            <p className="text-gray-400">
-              Luxury travel experiences crafted just for you
-            </p>
+            <div className="mb-2">
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/MAPLE LEAF logo design.png"
+                  alt="Maple Leaf Tours Logo"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
+                <div className="flex flex-col">
+                  <h3 className="text-xl font-bold">Maple Leaf Tours</h3>
+                  <p className="text-gray-400 text-sm italic font-light text-[#010001]/75">Simple. Elegant. Classy</p>
+                </div>
+              </div>
+            </div>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
@@ -35,10 +47,11 @@ export function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
             <ul className="space-y-2 text-gray-400">
-              <li>123 Travel Street</li>
-              <li>New York, NY 10001</li>
+              <li>Maple Building,</li>
+              <li>Behind S-Mart Departmental Store,</li>
+              <li>Near Krishi Bhawan, Tadong</li>
               <li>Phone: (555) 123-4567</li>
-              <li>Email: info@mapletours.com</li>
+              <li>Email: Travelwithmaple2023@gmail.com</li>
             </ul>
           </div>
           <div>
@@ -57,7 +70,20 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Maple Tours. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Maple Leaf Tours. All rights reserved.</p>
+          <div className="mt-2 flex items-center justify-center gap-1">
+            <span>Made with</span>
+            <Heart className="h-4 w-4 text-red-500 fill-red-500" />
+            <span>by</span>
+            <Link 
+              href="https://www.waglogy.in" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300"
+            >
+              Waglogy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
