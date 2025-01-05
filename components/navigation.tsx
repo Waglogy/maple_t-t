@@ -12,12 +12,14 @@ export function Navigation() {
   return (
     <header className="fixed top-0 w-full z-50 bg-white/75 backdrop-blur-md border-b">
       <div 
-        className="absolute inset-0 -z-10 opacity-15"
+        className="fixed inset-0 top-16 bg-white/85 backdrop-blur-md -z-10"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L45 15L37.5 22.5L45 30L30 45L22.5 37.5L15 45L0 30L7.5 22.5L0 15L15 0L22.5 7.5L30 0z' fill='%23f45201' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-          backgroundSize: '60px 60px',
+          backgroundImage: `url("https://cdn.pixabay.com/photo/2017/01/31/22/07/autumn-2027456_1280.png")`,
+          backgroundSize: '200px auto',
+          backgroundRepeat: 'repeat',
           transform: 'rotate(-45deg)',
-          animation: 'falling-leaves 20s linear infinite'
+          animation: 'falling-leaves 30s linear infinite',
+          opacity: '0.15'
         }}
       />
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between relative z-10">
@@ -118,7 +120,7 @@ export function Navigation() {
             background-position: 0 0;
           }
           to {
-            background-position: 60px 60px;
+            background-position: 200px 200px;
           }
         }
       `}</style>

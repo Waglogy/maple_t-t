@@ -86,17 +86,17 @@ const vehicles = [
 
 const slides = [
   {
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
+    url: "/1.png",
     title: "Sikkim Mountains",
     description: "Experience the majesty of the Eastern Himalayas"
   },
   {
-    url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa",
+    url: "/2.png",
     title: "Nepal Temples",
     description: "Discover ancient spiritual heritage"
   },
   {
-    url: "https://images.unsplash.com/photo-1623238913973-21e45cced554",
+    url: "/3.png",
     title: "Kalimpong Hills",
     description: "Explore the scenic beauty of Kalimpong"
   }
