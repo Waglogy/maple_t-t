@@ -66,16 +66,30 @@ export function Navigation() {
         <button
           className="md:hidden"
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-label="Toggle menu"
         >
-          {isOpen ? <X /> : <Menu />}
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 6H20M4 12H20M4 18H20"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
       </nav>
 
       {/* Mobile Menu */}
       <div
         className={cn(
-          "fixed inset-0 mt-4 top-16 bg-black/75 backdrop-blur-md z-50 md:hidden transition-transform duration-300 h-80",
+          "fixed inset-0 mt-5 top-16 bg-black/75 backdrop-blur-md z-50 md:hidden transition-transform duration-300 h-80",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
