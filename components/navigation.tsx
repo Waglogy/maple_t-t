@@ -89,7 +89,7 @@ export function Navigation() {
       {/* Mobile Menu */}
       <div
         className={cn(
-          "fixed inset-0 mt-5 top-16 bg-black/75 backdrop-blur-md z-50 md:hidden transition-transform duration-300 h-80",
+          "fixed inset-0 mt-6 top-16 bg-black/75 backdrop-blur-md z-50 md:hidden transition-transform duration-300 h-80",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
