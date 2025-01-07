@@ -20,7 +20,7 @@ export function Chatbot() {
     <div className="fixed bottom-4 right-4 z-50">
       <Button
         size="icon"
-        className="h-12 w-12 rounded-full gradientt-button"
+        className="h-12 w-12 rounded-full gradient-btn"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X /> : <MessageCircle />}

@@ -104,11 +104,11 @@ const slides = [
 
 export default function Home() {
   return (
-    <div className="pt-16">
+    <div className="pt-100">
       {/* Hero Section with Carousel */}
-      <section className="relative h-[80vh]">
+      <section className="relative h-[90vh]">
         <Carousel slides={slides} />
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
           <div className="text-center text-white space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold">
               Discover Luxury Travel
