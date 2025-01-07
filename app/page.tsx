@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Carousel } from "@/components/carousel"
 import { PackageCard } from "@/components/package-card"
 import Image from "next/image"
+import Link from "next/link"
 
 const packages = [
   {
@@ -166,8 +167,8 @@ export default function Home() {
                 we ensure your travel is as memorable as your destination. Each vehicle comes with a professional 
                 chauffeur and is maintained to the highest standards of comfort and safety.
               </p>
-              <Button className="gradient-button">
-                View Fleet
+              <Button className="gradient-button" asChild>
+                <Link href="/fleet">View Fleet</Link>
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
