@@ -95,7 +95,7 @@ export default function ContactPage() {
                   />
                 </div>
                 
-                <Button className="w-full bg-gradient-to-r from-[#f45201] to-[#010001] hover:opacity-90">
+                <Button className="w-full gradient-button">
                   Send Message
                 </Button>
               </form>
