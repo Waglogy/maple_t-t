@@ -4,6 +4,7 @@ import { Carousel } from "@/components/carousel"
 import { PackageCard } from "@/components/package-card"
 import Image from "next/image"
 import Link from "next/link"
+import { DownloadIcon } from "@/components/icons/download-icon"
 
 const packages = [
   {
@@ -107,7 +108,7 @@ export default function Home() {
   return (
     <div className="pt-100">
       {/* Hero Section with Carousel */}
-      <section className="relative h-[90vh]">
+      <section className="relative h-[100vh]">
         <Carousel slides={slides} />
         <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
           <div className="text-center text-white space-y-4">
@@ -120,6 +121,69 @@ export default function Home() {
             <Button size="lg" className="gradient-button">
               Explore Packages
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Story Section */}
+      <section className="py-20 ">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            <span className="gradient-text">About Us & Our Story</span>
+          </h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold text-black">
+                About Maple Leafs
+              </h3>
+              <p className="text-black">
+                Since our inception, we've been dedicated to providing unparalleled luxury 
+                transportation experiences in Nepal. Our journey began with a simple vision: 
+                to transform ordinary travel into extraordinary memories.
+              </p>
+              <h3 className="text-2xl font-semibold text-black">
+                Our Story
+              </h3>
+              <p className="text-black">
+                Today, we pride ourselves on our fleet of meticulously maintained luxury 
+                vehicles and our team of professional chauffeurs. Whether it's a mountain 
+                expedition, city tour, or airport transfer, we ensure every journey with us 
+                is marked by comfort, safety, and sophistication.
+              </p>
+              <Button className="gradient-btn" asChild>
+                <Link href="/contact">Contact Us</Link>
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="relative h-[300px] rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800"
+                    alt="Scenic mountain drive"
+                    fill
+                    className="object-cover hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <div className="relative h-[200px] rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1580674684081-7617fbf3d745"
+                    alt="Luxury vehicle interior"
+                    fill
+                    className="object-cover hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+              </div>
+              <div className="relative h-[520px] rounded-lg overflow-hidden">
+                <Image
+                  src="https://images.unsplash.com/photo-1506521781263-d8422e82f27a"
+                  alt="Buddhist Monastery in Sikkim"
+                  fill
+                  className="object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>

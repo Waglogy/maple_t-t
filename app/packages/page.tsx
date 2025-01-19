@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
+import { DownloadIcon } from "@/components/icons/download-icon"
+import { DownloadButton } from "@/components/download-button"
 
 const packages = [
   {
@@ -101,9 +103,12 @@ export default function PackagesPage() {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full gradient-button">
-                    Book Now
-                  </Button>
+                  <div className="flex gap-4 mt-6">
+                    <Button className="gradient-btn flex items-center gap-2">
+                      Book Now
+                    </Button>
+                    <DownloadButton title={pkg.title} />
+                  </div>
                 </CardContent>
               </Card>
             ))}

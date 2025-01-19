@@ -14,20 +14,20 @@ export function Navigation() {
       <div 
        
       />
-      <nav className="container mx-auto px-4 h-22 flex items-center justify-between relative z-10">
+      <nav className="container mx-auto px-4 h-24 flex items-center justify-between relative z-10">
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative w-[90px] h-[90px]">
+          <div className="relative w-[100px] h-[100px]">
             <Image
               src="/MAPLE LEAF logo design.png"
               alt="Maple Leaf Tours Logo"
-              width={90}
-              height={90}
+              width={100}
+              height={100}
               className="object-contain"
               priority
             />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-xl gradient-text whitespace-nowrap">
+            <span className="font-bold text-xl text-white whitespace-nowrap">
               Maple Leaf Tours
             </span>
             <span className="text-sm italic font-light text-[#ffffff]/75" style={{ fontFamily: 'Palatino, serif' }}>
@@ -41,14 +41,15 @@ export function Navigation() {
           <Link href="/" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
             Home
           </Link>
-          <Link href="/about" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
-            About
-          </Link>
+         
           <Link href="/packages" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
             Packages
           </Link>
           <Link href="/contact" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
             Contact
+          </Link>
+           <Link href="/testimonials" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
+            Testimonials
           </Link>
           <Link href="/booking" className="gradient-button">
             Book Now
@@ -101,13 +102,13 @@ export function Navigation() {
           >
             Home
           </Link>
-          <Link
+          {/* <Link
             href="/about"
             className="text-lg font-medium text-[#ffffff] hover:text-[#f45201]"
             onClick={() => setIsOpen(false)}
           >
             About
-          </Link>
+          </Link> */}
           <Link
             href="/packages"
             className="text-lg font-medium text-[#ffffff] hover:text-[#f45201]"
