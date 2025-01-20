@@ -123,6 +123,10 @@ export function Navigation() {
           >
             Contact
           </Link>
+          <Link href="/testimonials" 
+          className="text-lg  font-medium text-[#ffffff] hover:text-[#f45201] flex items-center gap-2">
+            Testimonials
+          </Link>
           <Link href="/booking" className="gradient-button w-full text-center">
             Book Now
           </Link>
