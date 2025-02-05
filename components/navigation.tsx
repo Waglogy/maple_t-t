@@ -38,7 +38,7 @@ export function Navigation() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
+          <Link href="/home" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
             Home
           </Link>
          
@@ -54,6 +54,7 @@ export function Navigation() {
           <Link href="/booking" className="gradient-button">
             Book Now
           </Link>
+          
           <Link 
             href="/login" 
             className="text-white hover:text-[#f45201] transition-colors flex items-center gap-2"

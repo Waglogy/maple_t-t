@@ -5,7 +5,8 @@ import { PackageCard } from "@/components/package-card"
 import Image from "next/image"
 import Link from "next/link"
 import { DownloadIcon } from "@/components/icons/download-icon"
-
+import SikkimMap from "@/components/SikkimMap"
+import PhotoGallery from "@/components/PhotoGallery"
 
 
 const packages = [
@@ -117,9 +118,9 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold">
             Elegance in Every Journey
           </h1>
-            <p className="text-xl md:text-2xl max-w-2xl mx-auto">
-              Travel with grace and sophistication—where simplicity meets timeless class.
-            </p>
+        <p className="text-xl md:text-2xl max-w-2xl mx-auto">
+          Travel with grace and sophistication—where simplicity meets timeless class.
+        </p>
 
             <Button size="lg" className="gradient-button">
               Explore Packages
@@ -190,12 +191,11 @@ export default function Home() {
           </div>
         </div>
       </section>
-    
+      {/* Interactive Map */}
+      <SikkimMap />
 
-
-
-      {/* Top Rated Packages */}
-      <section className="py-20 bg-[#f8f7da]">
+ {/* Top Rated Packages */}
+ <section className="py-20 bg-[#f8f7da]">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             <span className="gradient-text">Top Rated Packages</span>
@@ -216,6 +216,13 @@ export default function Home() {
          
         </div>
       </section>
+
+      {/* photo gallery */}
+     <PhotoGallery/>
+
+
+
+     
     </div>
   )
 }

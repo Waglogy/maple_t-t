@@ -7,7 +7,10 @@ export default function ContactPage() {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="relative h-[40vh] bg-gradient-to-r from-[#010001] to-[#f45201]">
+      <section 
+  className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center" 
+  style={{ backgroundImage: "url('/3.png')" }}
+>
         <div className="absolute inset-0 flex items-center justify-center text-white">
           <div className="text-center space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold">Contact Us</h1>

@@ -59,16 +59,21 @@ export default function PackagesPage() {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201]">
-        <div className="absolute inset-0 flex items-center justify-center text-white">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-6xl font-bold">Luxury Travel Packages</h1>
-            <p className="text-xl max-w-2xl mx-auto">
-              Curated experiences in the Eastern Himalayas
-            </p>
-          </div>
-        </div>
-      </section>
+    {/* Hero Section */}
+<section 
+  className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center" 
+  style={{ backgroundImage: "url('/2.png')" }}
+>
+  <div className="absolute inset-0 flex items-center justify-center text-white">
+    <div className="text-center space-y-4">
+      <h1 className="text-4xl md:text-6xl font-bold">Exclusive Travel Packages</h1>
+      <p className="text-xl max-w-2xl mx-auto text-white">
+        Handpicked journeys through the Eastern Himalayas.
+      </p>
+    </div>
+  </div>
+</section>
+
 
       {/* Packages Grid */}
       <section className="py-20">
@@ -116,56 +121,7 @@ export default function PackagesPage() {
         </div>
       </section>
 
-      {/* Luxury Stays */}
-      <section className="py-20 bg-gradient-to-b from-[#f8f7da] to-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Luxury Accommodations</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="relative h-96 rounded-lg overflow-hidden group">
-              <Image
-                src="https://images.unsplash.com/photo-1566073771259-6a8506099945"
-                alt="Luxury Resort"
-                fill
-                className="object-cover transition-transform group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                <div className="p-6 text-white">
-                  <h3 className="text-2xl font-bold mb-2">5-Star Resorts</h3>
-                  <p>Experience unmatched luxury and comfort</p>
-                </div>
-              </div>
-            </div>
-            <div className="relative h-96 rounded-lg overflow-hidden group">
-              <Image
-                src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b"
-                alt="Heritage Hotels"
-                fill
-                className="object-cover transition-transform group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                <div className="p-6 text-white">
-                  <h3 className="text-2xl font-bold mb-2">Heritage Hotels</h3>
-                  <p>Stay in historic properties with modern amenities</p>
-                </div>
-              </div>
-            </div>
-            <div className="relative h-96 rounded-lg overflow-hidden group">
-              <Image
-                src="https://images.unsplash.com/photo-1601918774946-25832a4be0d6"
-                alt="Boutique Lodges"
-                fill
-                className="object-cover transition-transform group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                <div className="p-6 text-white">
-                  <h3 className="text-2xl font-bold mb-2">Boutique Lodges</h3>
-                  <p>Intimate settings with personalized service</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+     
     </div>
   )
 }
