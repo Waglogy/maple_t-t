@@ -71,7 +71,7 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="pt-24 min-h-screen bg-gradient-to-br from-[#f8f7da]/50 via-white/50 to-[#f8f7da]/50">
+    <div className="pt-24 mt-8 min-h-screen bg-gradient-to-br from-[#f8f7da]/50 via-white/50 to-[#f8f7da]/50">
       <div className="container mx-auto px-4 pb-12">
         <h1 className="text-4xl font-bold text-center mb-8">
           <span className="gradient-text">Book Your Journey</span>

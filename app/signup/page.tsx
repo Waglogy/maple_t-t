@@ -4,10 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
-import { Mail, Lock } from "lucide-react";
+import { UserCircle, Mail, Lock } from "lucide-react";
 
-export default function LoginPage() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+export default function SignupPage() {
+  const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -17,10 +17,9 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", formData);
+      const response = await axios.post("http://localhost:5000/auth/signup", formData);
       if (response && response.data) {
-        alert("Login Successful!");
-        localStorage.setItem("token", response.data.token);
+        alert("Signup Successful!");
       } else {
         throw new Error("Invalid response from server");
       }
@@ -39,10 +38,18 @@ export default function LoginPage() {
         </div>
         
         <div className="px-8 pb-8">
-          <h2 className="text-2xl font-bold text-center mb-4">Welcome Back</h2>
+          <h2 className="text-2xl font-bold text-center mb-4">Create Account</h2>
           {error && <p className="text-red-500 text-center">{error}</p>}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label className="text-sm font-medium text-gray-700">Full Name</label>
+              <div className="relative">
+                <UserCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg" placeholder="John Doe" required />
+              </div>
+            </div>
+
             <div>
               <label className="text-sm font-medium text-gray-700">Email</label>
               <div className="relative">
@@ -59,12 +66,12 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button type="submit" className="w-full py-2 rounded-lg gradient-button">Sign In</button>
+            <button type="submit" className="w-full py-2 rounded-lg gradient-button">Sign Up</button>
           </form>
 
           <div className="mt-6 text-center">
-            <Link href="/signup" className="text-sm text-blue-600 hover:text-blue-800">
-              Don't have an account? Sign up
+            <Link href="/login" className="text-sm text-blue-600 hover:text-blue-800">
+              Already have an account? Sign in
             </Link>
           </div>
 
