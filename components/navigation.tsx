@@ -15,7 +15,7 @@ export function Navigation() {
        
       />
       <nav className="container mx-auto px-4 h-24 flex items-center justify-between relative z-10">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/home" className="flex items-center gap-3">
           <div className="relative w-[100px] h-[100px]">
             <Image
               src="/MAPLE LEAF logo design.png"
