@@ -10,11 +10,11 @@ export default function SignupPage() {
   const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5000/auth/signup", formData);
