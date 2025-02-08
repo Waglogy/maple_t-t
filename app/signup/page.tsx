@@ -14,20 +14,7 @@ export default function SignupPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:5000/auth/signup", formData);
-      if (response && response.data) {
-        alert("Signup Successful!");
-      } else {
-        throw new Error("Invalid response from server");
-      }
-    }catch (error) {
-      const err = error as any; // Temporary workaround
-      setError(err.response?.data?.message || "An error occurred. Please try again.");
-    }    
-  };
+ 
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
@@ -42,7 +29,7 @@ export default function SignupPage() {
           <h2 className="text-2xl font-bold text-center mb-4">Create Account</h2>
           {error && <p className="text-red-500 text-center">{error}</p>}
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" >
             <div>
               <label className="text-sm font-medium text-gray-700">Full Name</label>
               <div className="relative">
