@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import axios from "axios";
 import { Mail, Lock } from "lucide-react";
 
 export default function LoginPage() {
@@ -14,19 +13,9 @@ export default function LoginPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:5000/auth/login", formData);
-      if (response && response.data) {
-        alert("Login Successful!");
-        localStorage.setItem("token", response.data.token);
-      } else {
-        throw new Error("Invalid response from server");
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || "An error occurred. Please try again.");
-    }
+    alert("Login functionality is disabled.");
   };
 
   return (
