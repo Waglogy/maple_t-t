@@ -141,7 +141,7 @@ export default function TestimonialsPage() {
                 </label>
                 <textarea
                   id="testimonial"
-                  className="w-full p-3 border border-gray-300 rounded-md" rows="4"
+                  className="w-full p-3 border border-gray-300 rounded-md" rows = {4}
                   placeholder="Share your experience with us"
                 ></textarea>
               </div>
