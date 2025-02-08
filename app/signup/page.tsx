@@ -23,9 +23,10 @@ export default function SignupPage() {
       } else {
         throw new Error("Invalid response from server");
       }
-    } catch (error) {
-      setError(error.response?.data?.message || "An error occurred. Please try again.");
-    }
+    }catch (error) {
+      const err = error as any; // Temporary workaround
+      setError(err.response?.data?.message || "An error occurred. Please try again.");
+    }    
   };
 
   return (
