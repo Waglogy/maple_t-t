@@ -152,7 +152,9 @@ export default function SikkimInteractiveMap({
       <div className="grid md:grid-cols-2 gap-6">
         <div className="relative">
           {/* Map Container */}
-<div className="relative w-[500px] h-[600px] mx-auto rounded-lg overflow-hidden">
+          <div className="relative w-[400px] h-[600px] mx-auto rounded-lg overflow-hidden 
+                sm:w-[400px] md:w-[450px] lg:w-[500px]">
+
             {/* Background Image */}
             <img
               src={mapImage || "/placeholder.svg"}
