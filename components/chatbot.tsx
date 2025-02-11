@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -25,7 +24,7 @@ export function Chatbot() {
         className="h-12 w-12 rounded-full gradient-btn"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {isOpen ? <X /> : <MessageCircle />}
+        <MessageCircle />
       </Button>
 
       {/* Chatbot Popup */}
@@ -37,8 +36,12 @@ export function Chatbot() {
             : "translate-y-4 opacity-0 pointer-events-none"
         )}
       >
-        <CardHeader>
+        <CardHeader className="flex justify-between items-center">
           <CardTitle>Chat with us</CardTitle>
+          {/* Close Button */}
+          <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700">
+            <X size={20} />
+          </button>
         </CardHeader>
         <CardContent className="h-full">
           {/* Embed BotPress Webchat */}
