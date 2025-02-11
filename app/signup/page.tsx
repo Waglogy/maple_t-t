@@ -24,15 +24,20 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
+    setSuccess(""); ;
 
     try {
       const response = await axios.post("https://maplesserver.vercel.app/api/auth/signup", formData);
       setSuccess("Account created successfully! Please log in.");
       setFormData({ firstName: "", lastName: "", email: "", password: "", phone: "" });
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed. Please try again.");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Signup failed. Please try again.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
+    
   };
 
   return (
