@@ -3,19 +3,28 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Lock } from "lucide-react";
+import axios from "axios";
+import { Mail, Lock, XCircle } from "lucide-react";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Restore preventDefault() to stop page refresh
-    alert("Login functionality is disabled.");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("https://maplesserver.vercel.app/api/auth/login", formData);
+      localStorage.setItem("token", response.data.token);
+      alert("Login successful");
+    } catch (err) {
+      setError("Invalid credentials");
+      setShowError(true);
+    }
   };
 
   return (
@@ -29,7 +38,20 @@ export default function LoginPage() {
         
         <div className="px-8 pb-8">
           <h2 className="text-2xl font-bold text-center mb-4">Welcome Back</h2>
-          {error && <p className="text-red-500 text-center">{error}</p>}
+
+          {showError && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-4 rounded-lg shadow-lg max-w-sm w-full">
+                <div className="flex justify-between items-center border-b pb-2">
+                  <h3 className="text-lg font-semibold text-red-600">Error</h3>
+                  <button onClick={() => setShowError(false)} className="text-gray-600 hover:text-gray-900">
+                    <XCircle size={20} />
+                  </button>
+                </div>
+                <p className="text-sm text-gray-700 mt-2">{error}</p>
+              </div>
+            </div>
+          )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
