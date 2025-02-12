@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
-import { UserCircle, Mail, Lock, Phone } from "lucide-react";
+import { Mail, Lock, Phone } from "lucide-react";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -24,31 +24,49 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess(""); ;
+    setSuccess("");
+
+    console.log("Submitting Form Data:", formData); // Debugging log
 
     try {
-      const response = await axios.post("https://maplesserver.vercel.app/api/auth/signup", formData);
-      setSuccess("Account created successfully! Please log in.");
-      setFormData({ firstName: "", lastName: "", email: "", password: "", phone: "" });
+      const response = await axios.post(
+        "https://maplesserver.vercel.app/api/auth/signup",
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true, // Ensures cookies and headers are properly sent
+        }
+      );
+
+      console.log("Signup Response:", response.data); // Debugging log
+
+      setSuccess(response.data.message || "Account created successfully!");
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        phone: "",
+      });
     } catch (err) {
       if (axios.isAxiosError(err)) {
+        console.error("Signup error response:", err.response?.data);
         setError(err.response?.data?.message || "Signup failed. Please try again.");
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
     }
-    
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
       <div className="fixed inset-0 z-0" style={{ backgroundImage: 'url("/1.png")', backgroundSize: 'cover', backgroundPosition: 'center', opacity: '0.15' }} />
-      
+
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden z-10 my-12">
         <div className="relative h-32">
           <Image src="/MAPLE LEAF logo design.png" alt="Maple Leaf Tours Logo" width={80} height={80} className="absolute top-4 left-1/2 transform -translate-x-1/2" />
         </div>
-        
+
         <div className="px-8 pb-8">
           <h2 className="text-2xl font-bold text-center mb-4">Create Account</h2>
           {error && <p className="text-red-500 text-center">{error}</p>}
@@ -59,12 +77,12 @@ export default function SignupPage() {
               <label className="text-sm font-medium text-gray-700">First Name</label>
               <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="John" required />
             </div>
-            
+
             <div>
               <label className="text-sm font-medium text-gray-700">Last Name</label>
               <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Doe" required />
             </div>
-            
+
             <div>
               <label className="text-sm font-medium text-gray-700">Email</label>
               <div className="relative">

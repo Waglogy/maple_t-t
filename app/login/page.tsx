@@ -21,11 +21,16 @@ export default function LoginPage() {
       const response = await axios.post("https://maplesserver.vercel.app/api/auth/login", formData);
       localStorage.setItem("token", response.data.token);
       alert("Login successful");
-    } catch (err) {
-      setError("Invalid credentials");
+    } catch (err: any) {
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error); // Show backend error
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
       setShowError(true);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
