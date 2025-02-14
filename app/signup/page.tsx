@@ -1,62 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
+import { useState, useEffect } from "react";
 import { Mail, Lock, Phone } from "lucide-react";
-
 export default function SignupPage() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    phone: "",
+    phone: ""
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
+  
+  useEffect(() => {
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      phone: ""
+    });
+  }, []);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    console.log("Submitting Form Data:", formData); // Debugging log
-
+    
+    console.log("Submitting Data:", formData); // Debugging log
+  
     try {
-      const response = await axios.post(
-        "https://maplesserver.vercel.app/api/auth/signup",
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true, // Ensures cookies and headers are properly sent
-        }
-      );
-
-      console.log("Signup Response:", response.data); // Debugging log
-
-      setSuccess(response.data.message || "Account created successfully!");
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        phone: "",
+      const response = await axios.post("https://maplesserver.vercel.app/api/auth/signup", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+  
+      console.log("Signup successful:", response.data);
+      
+      
+    
+    // Redirect to login page
+    router.push("/middle");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.error("Signup error response:", err.response?.data);
-        setError(err.response?.data?.message || "Signup failed. Please try again.");
+        console.error("Signup error:", err.response?.data);
+        alert(err.response?.data?.error || "An error occurred");
       } else {
-        setError("An unexpected error occurred. Please try again.");
+        console.error("Unexpected error:", err);
       }
     }
   };
+  
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
@@ -69,8 +72,6 @@ export default function SignupPage() {
 
         <div className="px-8 pb-8">
           <h2 className="text-2xl font-bold text-center mb-4">Create Account</h2>
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          {success && <p className="text-green-500 text-center">{success}</p>}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
