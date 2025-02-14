@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
+import { useState, useEffect } from "react";
 import { Mail, Lock, Phone } from "lucide-react";
-
 export default function SignupPage() {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -33,35 +33,25 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    console.log("Submitting Form Data:", formData); // Debugging log
-
+    
+    console.log("Submitting Data:", formData); // Debugging log
+  
     try {
-      const response = await axios.post(
-        "https://maplesserver.vercel.app/api/auth/signup",
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true, // Ensures cookies and headers are properly sent
-        }
-      );
-
-      console.log("Signup Response:", response.data); // Debugging log
-
-      setSuccess(response.data.message || "Account created successfully!");
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        phone: "",
+      const response = await axios.post("https://maplesserver.vercel.app/api/auth/signup", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+  
+      console.log("Signup successful:", response.data);
+      
+    
+    // Redirect to login page
+    router.push("/middle");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.error("Signup error response:", err.response?.data);
-        setError(err.response?.data?.message || "Signup failed. Please try again.");
+        console.error("Signup error:", err.response?.data);
+        alert(err.response?.data?.error || "An error occurred");
       } else {
         console.error("Unexpected error:", err);
       }
