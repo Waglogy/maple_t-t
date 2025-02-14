@@ -1,13 +1,15 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Carousel } from "@/components/carousel"
-import { PackageCard } from "@/components/package-card"
-import Image from "next/image"
-import Link from "next/link"
-import { DownloadIcon } from "@/components/icons/download-icon"
-import SikkimMap from "@/components/SikkimMap"
-import PhotoGallery from "@/components/PhotoGallery"
+"use client"; // Mark this file as a client component
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation"; // Make sure this is only used in the client component
+import { Button } from "@/components/ui/button";
+import { Carousel } from "@/components/carousel";
+import { PackageCard } from "@/components/package-card";
+import Image from "next/image";
+import Link from "next/link";
+import { DownloadIcon } from "@/components/icons/download-icon";
+import SikkimMap from "@/components/SikkimMap";
+import PhotoGallery from "@/components/PhotoGallery";
 
 const packages = [
   {
@@ -31,63 +33,7 @@ const packages = [
     duration: "6 Days | Deluxe Package",
     features: ["Heritage hotels", "Temple tours", "Mountain flights", "Authentic cuisine"]
   }
-]
-
-const luxuryStays = [
-  {
-    name: "Taj Tashi Bhutan",
-    image: "https://images.unsplash.com/photo-1582719508461-905c673771fd",
-    description: "Experience Bhutanese architecture with modern luxury"
-  },
-  {
-    name: "Mayfair Gangtok",
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945",
-    description: "Luxury amid the Himalayas"
-  },
-  {
-    name: "Dwarika's Kathmandu",
-    image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb",
-    description: "Heritage luxury in Nepal"
-  },
-  {
-    name: "Elgin Mount Pandim",
-    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4",
-    description: "Heritage hotel with mountain views"
-  },
-  {
-    name: "The Oberoi Cecil",
-    image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-    description: "Colonial grandeur meets modern comfort"
-  },
-  {
-    name: "Uma Paro Bhutan",
-    image: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c",
-    description: "Intimate luxury in the heart of Paro"
-  }
-]
-
-const vehicles = [
-  {
-    name: "Mercedes S-Class",
-    image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888",
-    description: "Ultimate luxury sedan"
-  },
-  {
-    name: "Toyota Land Cruiser",
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
-    description: "Premium SUV for mountain terrain"
-  },
-  {
-    name: "BMW 7 Series",
-    image: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
-    description: "Executive luxury car"
-  },
-  {
-    name: "Range Rover",
-    image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6",
-    description: "Luxury all-terrain vehicle"
-  }
-]
+];
 
 const slides = [
   {
@@ -105,9 +51,19 @@ const slides = [
     title: "Kalimpong Hills",
     description: "Explore the scenic beauty of Kalimpong"
   }
-]
+];
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if the user is logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn"); // This should be replaced with your actual login logic
+    if (!isLoggedIn) {
+      router.push("/login"); // Redirect to login if not logged in
+    }
+  }, [router]);
+
   return (
     <div className="pt-100">
       {/* Hero Section with Carousel */}
@@ -115,19 +71,20 @@ export default function Home() {
         <Carousel slides={slides} />
         <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
           <div className="text-center text-white space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold">
-            Elegance in Every Journey
-          </h1>
-        <p className="text-xl md:text-2xl max-w-2xl mx-auto">
-          Travel with grace and sophistication—where simplicity meets timeless class.
-        </p>
-
+            <h1 className="text-4xl md:text-6xl font-bold">
+              Elegance in Every Journey
+            </h1>
+            <p className="text-xl md:text-2xl max-w-2xl mx-auto">
+              Travel with grace and sophistication—where simplicity meets timeless class.
+            </p>
             <Button size="lg" className="gradient-button">
               Explore Packages
             </Button>
           </div>
         </div>
       </section>
+
+    
 
       {/* Our Story Section */}
       <section className="py-20 ">

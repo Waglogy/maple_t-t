@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -60,7 +59,7 @@ export default function LoginPage() {
         </div>
 
         <div className="px-8 pb-8">
-          <h2 className="text-2xl font-bold text-center mb-4">Welcome Back</h2>
+          <h2 className="text-2xl font-bold text-center mb-4">Please login to continue</h2>
 
           {showError && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
