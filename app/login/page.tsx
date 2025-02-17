@@ -25,14 +25,17 @@ export default function LoginPage() {
       );
       localStorage.setItem("token", response.data.token);
       router.push("/home"); // Redirect to /home after login
-    } catch (err: any) {
-      if (err.response && err.response.data && err.response.data.error) {
+    }catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
         setError(err.response.data.error);
       } else {
         setError("Something went wrong. Please try again.");
       }
       setShowError(true);
     }
+    
+    
+    
   };
 
   return (
