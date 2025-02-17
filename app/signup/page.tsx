@@ -47,7 +47,7 @@ export default function SignupPage() {
       
     
     // Redirect to login page
-    router.push("/middle");
+    router.push("/login");
     } catch (err) {
       if (axios.isAxiosError(err)) {
         console.error("Signup error:", err.response?.data);

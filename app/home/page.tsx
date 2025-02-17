@@ -7,7 +7,6 @@ import { Carousel } from "@/components/carousel";
 import { PackageCard } from "@/components/package-card";
 import Image from "next/image";
 import Link from "next/link";
-import { DownloadIcon } from "@/components/icons/download-icon";
 import SikkimMap from "@/components/SikkimMap";
 import PhotoGallery from "@/components/PhotoGallery";
 
