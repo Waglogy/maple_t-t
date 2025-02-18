@@ -23,16 +23,21 @@ export default function LoginPage() {
         "https://maplesserver.vercel.app/api/auth/login",
         formData
       );
-
+  
       const token = response.data.token;
       document.cookie = `token=${token}; path=/; secure;`;
-
+  
       router.push("/home"); // Redirect after successful login
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Something went wrong.");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Something went wrong.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
       setShowError(true);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
