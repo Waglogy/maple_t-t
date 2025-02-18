@@ -1,10 +1,14 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Carousel } from "@/components/carousel"
 import { PackageCard } from "@/components/package-card"
 import Image from "next/image"
 import Link from "next/link"
-import { DownloadIcon } from "@/components/icons/download-icon"
+import { X } from "lucide-react";
+
 
 
 
@@ -107,6 +111,16 @@ const slides = [
 ]
 
 export default function Home() {
+
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPopup(true);
+    }, 5000); // Show popup after 5 seconds
+
+    return () => clearTimeout(timer); // Cleanup on unmount
+  }, []);
   return (
     <div className="pt-100">
       {/* Hero Section with Carousel */}
@@ -127,6 +141,34 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white shadow-lg rounded-lg p-6 w-[350px] relative border">
+            {/* Close Button (X Icon) */}
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+              onClick={() => setShowPopup(false)}
+            >
+              < X size={24} />
+            </button>
+
+            <h2 className="text-xl font-bold text-center">Exciting News!</h2>
+            <p className="text-gray-700 text-center mt-2">
+              Unlock exclusive offers and personalized travel experiences.
+            </p>
+
+            <div className="flex justify-center mt-4">
+              <Link href="/login">
+                <Button className="gradient-btn">
+                  Login
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Our Story Section */}
       <section className="py-20 ">
