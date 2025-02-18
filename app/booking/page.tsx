@@ -43,15 +43,8 @@ const packages = [
 ]
 
 export default function BookingPage() {
-  const router = useRouter();
 
-  useEffect(() => {
-    // Check if the user is logged in
-    const isLoggedIn = localStorage.getItem("isLoggedIn"); // This should be replaced with your actual login logic
-    if (!isLoggedIn) {
-      router.push("/login"); // Redirect to login if not logged in
-    }
-  }, [router]);
+  
 
 
   const [currentStep, setCurrentStep] = React.useState(1)

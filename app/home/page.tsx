@@ -1,6 +1,6 @@
 "use client"; // Mark this file as a client component
 
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { useRouter } from "next/navigation"; // Make sure this is only used in the client component
 import { Button } from "@/components/ui/button";
 import { Carousel } from "@/components/carousel";
@@ -51,18 +51,7 @@ const slides = [
     description: "Explore the scenic beauty of Kalimpong"
   }
 ];
-
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Check if the user is logged in
-    const isLoggedIn = localStorage.getItem("isLoggedIn"); // This should be replaced with your actual login logic
-    if (!isLoggedIn) {
-      router.push("/login"); // Redirect to login if not logged in
-    }
-  }, [router]);
-
   return (
     <div className="pt-100">
       {/* Hero Section with Carousel */}
@@ -94,18 +83,18 @@ export default function Home() {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h3 className="text-2xl font-semibold text-black">
+              <h3 className="text-2xl font-semibold text-black dark:text-white">
                 About Maple Leafs
               </h3>
-              <p className="text-black">
+              <p className="text-black dark:text-white">
                 Since our inception, we've been dedicated to providing unparalleled luxury 
                 transportation experiences in Nepal. Our journey began with a simple vision: 
                 to transform ordinary travel into extraordinary memories.
               </p>
-              <h3 className="text-2xl font-semibold text-black">
+              <h3 className="text-2xl font-semibold text-black dark:text-white">
                 Our Story
               </h3>
-              <p className="text-black">
+              <p className="text-black dark:text-white">
                 Today, we pride ourselves on our fleet of meticulously maintained luxury 
                 vehicles and our team of professional chauffeurs. Whether it's a mountain 
                 expedition, city tour, or airport transfer, we ensure every journey with us 
@@ -154,7 +143,7 @@ export default function Home() {
  <section className="py-20 bg-[#f8f7da]">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="text-zinc-800">Top Rated Packages</span>
+            <span className="text-zinc-800 dark:text-white">Top Rated Packages</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (

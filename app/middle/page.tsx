@@ -1,71 +1,85 @@
-"use client";
+"use client";  // This is necessary for client-side rendering
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import Link from "next/link";
-import { Lock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";  // Use 'next/navigation' for Next.js 13+
 
-export default function OTPVerificationPage() {
-  const [otp, setOtp] = useState("");
+const ProtectedPage = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading, true = authenticated, false = not authenticated
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOtp(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    console.log("Verifying OTP:", otp); // Debugging log
-    
-    try {
-      const response = await axios.post("https://maplesserver.vercel.app/api/auth/verify-otp", { otp }, {
-        headers: { "Content-Type": "application/json" },
-      });
-      
-      console.log("OTP verification successful:", response.data);
-      alert("OTP verified successfully! Redirecting to login...");
-      
-      router.push("/login");
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error("OTP verification error:", err.response?.data);
-        alert(err.response?.data?.error || "Invalid OTP, please try again");
-      } else {
-        console.error("Unexpected error:", err);
+  useEffect(() => {
+    // Check if window object exists (client-side)
+    if (typeof window === "undefined") return;
+  
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem("token");
+  
+        if (!token) {
+          // No token found, redirect to login page
+          console.log("No token found, redirecting to login...");
+          router.replace("/login");
+          return;
+        }
+  
+        console.log("Checking token before request:", token);
+  
+        const response = await fetch("https://maplesserver.vercel.app/api/user", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+  
+        console.log("Auth Response Status:", response.status);
+  
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Auth Data:", data);
+  
+          if (data.success) {
+            console.log("Authenticated user, showing protected content...");
+            setIsAuthenticated(true);
+          } else {
+            // User is not authenticated, redirect to login
+            console.log("Not authenticated. Redirecting...");
+            localStorage.removeItem("token");
+            router.replace("/login");
+          }
+        } else {
+          // API call failed, redirect to login
+          console.log("API call failed. Redirecting...");
+          localStorage.removeItem("token");
+          router.replace("/login");
+        }
+      } catch (error) {
+        console.error("Authentication error:", error);
+        router.replace("/login");
       }
-    }
-  };
+    };
+  
+    checkAuth();
+  }, [router]);
+  
 
-  return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-20">
-      <div className="fixed inset-0 z-0" style={{ backgroundImage: 'url("/1.png")', backgroundSize: 'cover', backgroundPosition: 'center', opacity: '0.15' }} />
-      
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden z-10 my-12">
-        <div className="px-8 pb-8">
-          <h2 className="text-2xl font-bold text-center mb-4">Verify OTP</h2>
-          <p className="text-center text-gray-600 mb-6">Enter the OTP sent to your email</p>
-          
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label className="text-sm font-medium text-gray-700">OTP</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input type="text" name="otp" value={otp} onChange={handleChange} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg" placeholder="123456" required />
-              </div>
-            </div>
-            
-            <button type="submit" className="w-full py-2 rounded-lg gradient-button">Verify OTP</button>
-          </form>
-          
-          <div className="mt-6 text-center">
-            <Link href="/signup" className="text-sm text-blue-600 hover:text-blue-800">
-              Didn't receive an OTP? Resend
-            </Link>
-          </div>
-        </div>
+  // While the authentication status is loading, show a loading screen or message
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
+  // Return the protected content only if the user is authenticated
+  if (isAuthenticated) {
+    return (
+      <div>
+        <h1>Protected Content</h1>
+        <p>Only accessible to logged-in users!</p>
+        {/* Add more protected content here */}
       </div>
-    </div>
-  );
-}
+    );
+  }
+
+  // If not authenticated, redirecting should have already occurred, no need to render anything here
+  return null;
+};
+
+export default ProtectedPage;

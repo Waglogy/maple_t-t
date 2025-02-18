@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
-import { Mail, Lock, XCircle } from "lucide-react";
+import { Mail, Lock, XCircle, CheckCircle } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,61 +23,31 @@ export default function LoginPage() {
         "https://maplesserver.vercel.app/api/auth/login",
         formData
       );
-      localStorage.setItem("token", response.data.token);
-      router.push("/home"); // Redirect to /home after login
-    }catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response?.data?.error) {
-        setError(err.response.data.error);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+
+      const token = response.data.token;
+      document.cookie = `token=${token}; path=/; secure;`;
+
+      router.push("/home"); // Redirect after successful login
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Something went wrong.");
       setShowError(true);
     }
-    
-    
-    
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
-      <div
-        className="fixed inset-0 z-0"
-        style={{
-          backgroundImage: 'url("/1.png")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          opacity: "0.15",
-        }}
-      />
-
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden z-10 my-12">
         <div className="relative h-32">
-          <Image
-            src="/MAPLE LEAF logo design.png"
-            alt="Maple Leaf Tours Logo"
-            width={80}
-            height={80}
-            className="absolute top-4 left-1/2 transform -translate-x-1/2"
-          />
+          <Image src="/MAPLE LEAF logo design.png" alt="Logo" width={80} height={80} className="absolute top-4 left-1/2 transform -translate-x-1/2" />
         </div>
 
         <div className="px-8 pb-8">
           <h2 className="text-2xl font-bold text-center mb-4">Please login to continue</h2>
 
           {showError && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-4 rounded-lg shadow-lg max-w-sm w-full">
-                <div className="flex justify-between items-center border-b pb-2">
-                  <h3 className="text-lg font-semibold text-red-600">Error</h3>
-                  <button
-                    onClick={() => setShowError(false)}
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    <XCircle size={20} />
-                  </button>
-                </div>
-                <p className="text-sm text-gray-700 mt-2">{error}</p>
-              </div>
+            <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-3 flex items-center">
+              <XCircle className="mr-2" size={20} />
+              {error}
             </div>
           )}
 
@@ -99,9 +69,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Password
-              </label>
+              <label className="text-sm font-medium text-gray-700">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -116,9 +84,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button type="submit" className="w-full py-2 rounded-lg gradient-button">
-              Sign In
-            </button>
+            <button type="submit" className="w-full py-2 rounded-lg gradient-button">Sign In</button>
           </form>
 
           <div className="mt-6 text-center">

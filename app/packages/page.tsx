@@ -39,22 +39,7 @@ const packages = [
 ];
 
 export default function PackagesPage() {
-  const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    
-    if (!token) {
-      router.push("/login"); // Redirect to login if no token found
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  if (!isAuthenticated) {
-    return <p>Loading...</p>; // Prevent flickering
-  }
+ 
 
   return (
     <div className="pt-16">
