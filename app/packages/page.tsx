@@ -1,35 +1,48 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
-import { DownloadButton } from "@/components/download-button";
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import Image from "next/image"
+import { DownloadButton } from "@/components/download-buttonn"
+
+// Define the Package type for better type safety
+type Package = {
+  _id: string
+  title: string
+  description: string
+  price: number
+  image: {
+    url: string
+  }
+  features: string[]
+}
 
 export default function PackagesPage() {
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [packages, setPackages] = useState<Package[]>([])
+  const [loading, setLoading] = useState(true)
+  // Fix: Update the error state type to accept both string and null
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await fetch("https://maplesserver.vercel.app/api/package");
-        const data = await response.json();
+        const response = await fetch("https://maplesserver.vercel.app/api/package")
+        const data = await response.json()
         if (data.success) {
-          setPackages(data.data); // Store fetched packages
+          setPackages(data.data)
         } else {
-          setError("Failed to fetch packages");
+          setError("Failed to fetch packages")
         }
       } catch (err) {
-        setError("Error fetching packages");
+        setError("Error fetching packages")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchPackages();
-  }, []);
+    fetchPackages()
+  }, [])
 
   return (
     <div className="pt-16">
@@ -41,14 +54,10 @@ export default function PackagesPage() {
         <div className="absolute inset-0 flex items-center justify-center text-white">
           <div className="text-center space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold">Exclusive Travel Packages</h1>
-            <p className="text-xl max-w-2xl mx-auto text-white">
-              Handpicked journeys through the Eastern Himalayas.
-            </p>
+            <p className="text-xl max-w-2xl mx-auto text-white">Handpicked journeys through the Eastern Himalayas.</p>
           </div>
         </div>
       </section>
-
-
 
       {/* Packages Grid */}
       <section className="py-20">
@@ -61,20 +70,15 @@ export default function PackagesPage() {
               {packages.map((pkg) => (
                 <Card key={pkg._id} className="overflow-hidden">
                   <div className="relative h-64">
-                    <Image
-                      src={pkg.image.url}
-                      alt={pkg.title}
-                      fill
-                      className="object-cover"
-                    />
+                    <Image src={pkg.image.url || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
                   </div>
                   <CardContent className="p-8">
                     <div className="flex justify-between items-start mb-4">
-                      <div className=" mr-10 ">
+                      <div className="mr-10">
                         <h3 className="text-2xl font-bold">{pkg.title}</h3>
-                        <p className="text-gray-600 ">{pkg.description}</p>
+                        <p className="text-gray-600">{pkg.description}</p>
                       </div>
-                      <div className="text-right ">
+                      <div className="text-right">
                         <p className="text-sm text-gray-500">From</p>
                         <p className="text-2xl font-bold text-[#f45201]">₹{pkg.price}</p>
                       </div>
@@ -88,9 +92,7 @@ export default function PackagesPage() {
                       ))}
                     </ul>
                     <div className="flex gap-4 mt-6">
-                      <Button className="gradient-btn flex items-center gap-2">
-                        Book Now
-                      </Button>
+                      <Button className="gradient-btn flex items-center gap-2">Book Now</Button>
                       <DownloadButton title={pkg.title} />
                     </div>
                   </CardContent>
@@ -101,5 +103,6 @@ export default function PackagesPage() {
         </div>
       </section>
     </div>
-  );
+  )
 }
+
