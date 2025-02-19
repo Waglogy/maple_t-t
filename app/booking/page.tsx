@@ -1,5 +1,5 @@
 "use client"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import * as React from "react"
 import { ChevronRight, ChevronLeft, Calendar, Users, Plane, CreditCard } from 'lucide-react'
@@ -18,35 +18,36 @@ const steps = [
   { id: 4, name: "Payment", icon: CreditCard },
 ]
 
-const packages = [
-  {
-    id: "sikkim",
-    name: "Luxury Sikkim Expedition",
-    price: 89999,
-    duration: "5 Days",
-    description: "Experience the majesty of Sikkim with luxury accommodations"
-  },
-  {
-    id: "bhutan",
-    name: "Bhutan Heritage Tour",
-    price: 149999,
-    duration: "7 Days",
-    description: "Explore the cultural heritage of Bhutan in style"
-  },
-  {
-    id: "nepal",
-    name: "Nepal Valley Explorer",
-    price: 99999,
-    duration: "6 Days",
-    description: "Discover Nepal's treasures with premium service"
-  }
-]
+
+
 
 export default function BookingPage() {
 
-  
+  const [packages, setPackages] = useState([]);
+const [loadingPackages, setLoadingPackages] = useState(true);
+const [packageError, setPackageError] = useState("");
 
+useEffect(() => {
+  const fetchPackages = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/packages"); // Replace with actual API URL
+      const data = await response.json();
+      if (response.ok) {
+        setPackages(data);
+      } else {
+        setPackageError("Failed to load packages");
+      }
+    } catch (error) {
+      setPackageError("Network error. Please try again.");
+    } finally {
+      setLoadingPackages(false);
+    }
+  };
 
+  fetchPackages();
+}, []);
+
+  const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(1)
   const [formData, setFormData] = React.useState({
     package: "",
@@ -62,10 +63,46 @@ export default function BookingPage() {
     expiryDate: "",
     cvv: ""
   })
-
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
+
+const submitForm = async () => {
+    setLoading(true)
+    setError("")
+    setSuccess("")
+
+    try {
+      const response = await fetch("http://localhost:5000/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await response.json()
+
+      if (response.ok) {
+        setSuccess("Booking Successful! We'll contact you soon.")
+        alert("Thank you for booking! We will send you a confirmation mail soon.");
+
+        // Redirect to home page
+        router.push("/home");
+      } else {
+
+        setError(data.message || "Something went wrong")
+      }
+    } catch (err) {
+      setError("Network error. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+
 
   const nextStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length))
@@ -79,7 +116,7 @@ export default function BookingPage() {
     <div className="pt-24 mt-8 min-h-screen bg-gradient-to-br from-[#f8f7da]/50 via-white/50 to-[#f8f7da]/50">
       <div className="container mx-auto px-4 pb-12">
         <h1 className="text-4xl font-bold text-center mb-8">
-          <span className="gradient-text">Book Your Journey</span>
+          <span className="text-zinc-800 dark:text-white">Book Your Journey</span>
         </h1>
 
         {/* Progress Steps */}
@@ -128,10 +165,9 @@ export default function BookingPage() {
                         htmlFor={pkg.id}
                         className="relative flex cursor-pointer rounded-lg border p-4 hover:bg-gray-50"
                       >
-                        <RadioGroupItem value={pkg.id} id={pkg.id} className="mt-1" />
+                        <RadioGroupItem value={pkg.title} id={pkg.title} className="mt-1" />
                         <div className="ml-4">
-                          <span className="font-medium">{pkg.name}</span>
-                          <span className="block text-gray-500">{pkg.duration}</span>
+                          <span className="block text-gray-500">{pkg.title}</span>
                           <span className="block text-sm text-gray-500">{pkg.description}</span>
                           <span className="block mt-1 font-semibold text-[#f45201]">
                             ₹{pkg.price.toLocaleString('en-IN')}
@@ -324,6 +360,8 @@ export default function BookingPage() {
                   </>
                 )}
               </Button>
+              <Button onClick={submitForm} disabled={loading}>{loading ? "Submitting..." : "Confirm Booking"}</Button>
+
             </div>
           </CardContent>
         </Card>
