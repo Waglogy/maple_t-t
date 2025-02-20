@@ -1,8 +1,8 @@
 "use client"
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import * as React from "react"
-import { ChevronRight, ChevronLeft, Calendar, Users, Plane, CreditCard } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Calendar, Users, Plane, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,38 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 
+const validateCreditCard = (number: string) => {
+  // Remove any spaces or dashes
+  const cleanNumber = number.replace(/[\s-]/g, "")
+
+  // Check if the number contains only digits
+  if (!/^\d+$/.test(cleanNumber)) return false
+
+  // Check length (most cards are 13-19 digits)
+  if (cleanNumber.length < 13 || cleanNumber.length > 19) return false
+
+  // Luhn algorithm (mod 10)
+  let sum = 0
+  let isEven = false
+
+  // Loop through values starting from the rightmost digit
+  for (let i = cleanNumber.length - 1; i >= 0; i--) {
+    let digit = Number.parseInt(cleanNumber.charAt(i))
+
+    if (isEven) {
+      digit *= 2
+      if (digit > 9) {
+        digit -= 9
+      }
+    }
+
+    sum += digit
+    isEven = !isEven
+  }
+
+  return sum % 10 === 0
+}
+
 const steps = [
   { id: 1, name: "Package", icon: Plane },
   { id: 2, name: "Date & Travelers", icon: Calendar },
@@ -18,40 +50,41 @@ const steps = [
   { id: 4, name: "Payment", icon: CreditCard },
 ]
 
-
-
-
 export default function BookingPage() {
+  const [packages, setPackages] = useState([])
+  const [loadingPackages, setLoadingPackages] = useState(true)
+  const [packageError, setPackageError] = useState("")
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const response = await fetch("https://maplesserver.vercel.app/api/package") // Use local API
+        const result = await response.json()
+        console.log("Fetched Packages:", result)
 
-  const [packages, setPackages] = useState([]);
-const [loadingPackages, setLoadingPackages] = useState(true);
-const [packageError, setPackageError] = useState("");
-
-useEffect(() => {
-  const fetchPackages = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/packages"); // Replace with actual API URL
-      const data = await response.json();
-      if (response.ok) {
-        setPackages(data);
-      } else {
-        setPackageError("Failed to load packages");
+        // Extract the 'data' array
+        if (response.ok && Array.isArray(result.data)) {
+          setPackages(result.data) // Set only the 'data' array
+        } else {
+          setPackageError("Invalid response format")
+        }
+      } catch (error) {
+        console.error("Error fetching packages:", error)
+        setPackageError("Network error. Please try again.")
+      } finally {
+        setLoadingPackages(false)
       }
-    } catch (error) {
-      setPackageError("Network error. Please try again.");
-    } finally {
-      setLoadingPackages(false);
     }
-  };
 
-  fetchPackages();
-}, []);
+    fetchPackages()
+  }, [])
 
-  const router = useRouter();
+  const router = useRouter()
   const [currentStep, setCurrentStep] = React.useState(1)
   const [formData, setFormData] = React.useState({
     package: "",
-    date: "",
+    departure: "",
+    arrival: "",
+    travelDate: "",
     adults: "2",
     children: "0",
     firstName: "",
@@ -61,48 +94,108 @@ useEffect(() => {
     cardName: "",
     cardNumber: "",
     expiryDate: "",
-    cvv: ""
+    cvv: "",
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-const submitForm = async () => {
+  const submitForm = async () => {
     setLoading(true)
     setError("")
     setSuccess("")
 
+    // Validate required fields
+    if (
+      !formData.package ||
+      !formData.departure ||
+      !formData.arrival ||
+      !formData.travelDate ||
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.cardName ||
+      !formData.cardNumber ||
+      !formData.expiryDate ||
+      !formData.cvv
+    ) {
+      setError("Please fill in all required fields")
+      setLoading(false)
+      return
+    }
+
+    // Validate credit card
+    if (!validateCreditCard(formData.cardNumber)) {
+      setError("Please enter a valid credit card number")
+      setLoading(false)
+      return
+    }
+
+    // Format the data exactly as required by the API
+    const bookingData = {
+      package: formData.package,
+      departure: formData.departure,
+      arrival: formData.arrival,
+      travelDate: formData.travelDate,
+      adults: Number(formData.adults),
+      children: Number(formData.children),
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone,
+      email: formData.email,
+      cardName: formData.cardName,
+      cardNumber: formData.cardNumber.replace(/\s/g, ""), // Remove spaces before sending
+      expiryDate: formData.expiryDate,
+      cvv: formData.cvv,
+      status: "Confirmed",
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/api/bookings", {
+      console.log("Sending booking data:", bookingData) // Debug log
+
+      const response = await fetch("https://maplesserver.vercel.app/api/booking", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(bookingData),
       })
-      
-      const data = await response.json()
+
+      // Get the response text first
+      const responseText = await response.text()
+      console.log("API Response:", responseText) // Debug log
+
+      // Try to parse it as JSON
+      let data
+      try {
+        data = JSON.parse(responseText)
+      } catch (e) {
+        console.error("Failed to parse response as JSON:", responseText)
+        throw new Error("Invalid JSON response from server")
+      }
 
       if (response.ok) {
         setSuccess("Booking Successful! We'll contact you soon.")
-        alert("Thank you for booking! We will send you a confirmation mail soon.");
-
-        // Redirect to home page
-        router.push("/home");
+        alert("Thank you for booking! We will send you a confirmation mail soon.")
+        router.push("/home")
       } else {
-
-        setError(data.message || "Something went wrong")
+        // Show the specific error message from the API
+        setError(data.message || data.error || "Failed to create booking. Please try again.")
+        console.error("API Error:", data)
       }
     } catch (err) {
-      setError("Network error. Please try again.")
+      console.error("Booking error:", err)
+      setError(err.message || "Network error. Please try again.")
     } finally {
       setLoading(false)
     }
   }
-
-
 
   const nextStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length))
@@ -129,15 +222,13 @@ const submitForm = async () => {
                   "flex items-center",
                   currentStep > step.id && "text-[#f45201]",
                   currentStep === step.id && "text-[#f45201] font-semibold",
-                  currentStep < step.id && "text-gray-400"
+                  currentStep < step.id && "text-gray-400",
                 )}
               >
                 <div className="hidden md:flex items-center">
                   <step.icon className="w-5 h-5 mr-2" />
                   <span>{step.name}</span>
-                  {step.id !== steps.length && (
-                    <ChevronRight className="w-5 h-5 mx-4" />
-                  )}
+                  {step.id !== steps.length && <ChevronRight className="w-5 h-5 mx-4" />}
                 </div>
                 <div className="flex md:hidden items-center justify-center w-8 h-8 rounded-full border-2 border-current">
                   {step.id}
@@ -159,22 +250,30 @@ const submitForm = async () => {
                   onValueChange={(value) => setFormData({ ...formData, package: value })}
                 >
                   <div className="grid gap-4">
-                    {packages.map((pkg) => (
-                      <Label
-                        key={pkg.id}
-                        htmlFor={pkg.id}
-                        className="relative flex cursor-pointer rounded-lg border p-4 hover:bg-gray-50"
-                      >
-                        <RadioGroupItem value={pkg.title} id={pkg.title} className="mt-1" />
-                        <div className="ml-4">
-                          <span className="block text-gray-500">{pkg.title}</span>
-                          <span className="block text-sm text-gray-500">{pkg.description}</span>
-                          <span className="block mt-1 font-semibold text-[#f45201]">
-                            ₹{pkg.price.toLocaleString('en-IN')}
-                          </span>
-                        </div>
-                      </Label>
-                    ))}
+                    {loadingPackages ? (
+                      <p>Loading packages...</p>
+                    ) : packageError ? (
+                      <p className="text-red-500">{packageError}</p>
+                    ) : packages.length > 0 ? (
+                      packages.map((pkg) => (
+                        <Label
+                          key={pkg.id}
+                          htmlFor={pkg.id}
+                          className="relative flex cursor-pointer rounded-lg border p-4 hover:bg-gray-50"
+                        >
+                          <RadioGroupItem value={pkg.title} id={pkg.title} className="mt-1" />
+                          <div className="ml-4">
+                            <span className="block text-gray-500">{pkg.title}</span>
+                            <span className="block text-sm text-gray-500">{pkg.description}</span>
+                            <span className="block mt-1 font-semibold text-[#f45201]">
+                              ₹{pkg.price.toLocaleString("en-IN")}
+                            </span>
+                          </div>
+                        </Label>
+                      ))
+                    ) : (
+                      <p>No packages available.</p>
+                    )}
                   </div>
                 </RadioGroup>
               </div>
@@ -185,18 +284,48 @@ const submitForm = async () => {
               <div className="space-y-6">
                 <h2 className="text-2xl font-semibold mb-4">Choose Date & Travelers</h2>
                 <div className="grid gap-4">
+                  {/* Departure Date */}
                   <div>
-                    <Label htmlFor="date">Preferred Travel Date</Label>
+                    <Label htmlFor="departure">Departure Date</Label>
                     <Input
                       type="date"
-                      id="date"
-                      name="date"
-                      value={formData.date}
+                      id="departure"
+                      name="departure"
+                      value={formData.departure}
                       onChange={handleInputChange}
-                      min={new Date().toISOString().split('T')[0]}
+                      min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
+
+                  {/* Arrival Date */}
+                  <div>
+                    <Label htmlFor="arrival">Arrival Date</Label>
+                    <Input
+                      type="date"
+                      id="arrival"
+                      name="arrival"
+                      value={formData.arrival}
+                      onChange={handleInputChange}
+                      min={formData.departure || new Date().toISOString().split("T")[0]}
+                    />
+                  </div>
+
+                  {/* Preferred Travel Date */}
+                  <div>
+                    <Label htmlFor="travelDate">Preferred Travel Date</Label>
+                    <Input
+                      type="date"
+                      id="travelDate"
+                      name="travelDate"
+                      value={formData.travelDate}
+                      onChange={handleInputChange}
+                      min={formData.departure || new Date().toISOString().split("T")[0]}
+                      max={formData.arrival}
+                    />
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
+                    {/* Adults */}
                     <div>
                       <Label htmlFor="adults">Adults</Label>
                       <Select
@@ -209,12 +338,14 @@ const submitForm = async () => {
                         <SelectContent>
                           {[1, 2, 3, 4, 5, 6].map((num) => (
                             <SelectItem key={num} value={num.toString()}>
-                              {num} {num === 1 ? 'Adult' : 'Adults'}
+                              {num} {num === 1 ? "Adult" : "Adults"}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
+
+                    {/* Children */}
                     <div>
                       <Label htmlFor="children">Children</Label>
                       <Select
@@ -227,7 +358,7 @@ const submitForm = async () => {
                         <SelectContent>
                           {[0, 1, 2, 3, 4].map((num) => (
                             <SelectItem key={num} value={num.toString()}>
-                              {num} {num === 1 ? 'Child' : 'Children'}
+                              {num} {num === 1 ? "Child" : "Children"}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -246,41 +377,20 @@ const submitForm = async () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">First Name</Label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                      />
+                      <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleInputChange} />
                     </div>
                     <div>
                       <Label htmlFor="lastName">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                      />
+                      <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleInputChange} />
                     </div>
                   </div>
                   <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                    />
+                    <Input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} />
                   </div>
                   <div>
                     <Label htmlFor="phone">Phone</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                    />
+                    <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} />
                   </div>
                 </div>
               </div>
@@ -293,12 +403,7 @@ const submitForm = async () => {
                 <div className="grid gap-4">
                   <div>
                     <Label htmlFor="cardName">Name on Card</Label>
-                    <Input
-                      id="cardName"
-                      name="cardName"
-                      value={formData.cardName}
-                      onChange={handleInputChange}
-                    />
+                    <Input id="cardName" name="cardName" value={formData.cardName} onChange={handleInputChange} />
                   </div>
                   <div>
                     <Label htmlFor="cardNumber">Card Number</Label>
@@ -306,9 +411,23 @@ const submitForm = async () => {
                       id="cardNumber"
                       name="cardNumber"
                       value={formData.cardNumber}
-                      onChange={handleInputChange}
-                      maxLength={16}
+                      onChange={(e) => {
+                        // Remove any non-digit characters
+                        const value = e.target.value.replace(/\D/g, "")
+                        // Add spaces every 4 digits
+                        const formatted = value.replace(/(\d{4})(?=\d)/g, "$1 ")
+                        setFormData({ ...formData, cardNumber: formatted })
+                      }}
+                      maxLength={19} // 16 digits + 3 spaces
+                      className={
+                        !formData.cardNumber || validateCreditCard(formData.cardNumber)
+                          ? ""
+                          : "border-red-500 focus:ring-red-500"
+                      }
                     />
+                    {formData.cardNumber && !validateCreditCard(formData.cardNumber) && (
+                      <p className="text-sm text-red-500 mt-1">Please enter a valid credit card number</p>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -323,13 +442,7 @@ const submitForm = async () => {
                     </div>
                     <div>
                       <Label htmlFor="cvv">CVV</Label>
-                      <Input
-                        id="cvv"
-                        name="cvv"
-                        value={formData.cvv}
-                        onChange={handleInputChange}
-                        maxLength={3}
-                      />
+                      <Input id="cvv" name="cvv" value={formData.cvv} onChange={handleInputChange} maxLength={3} />
                     </div>
                   </div>
                 </div>
@@ -348,11 +461,11 @@ const submitForm = async () => {
                 Previous
               </Button>
               <Button
-                onClick={currentStep === steps.length ? () => console.log('Submit:', formData) : nextStep}
+                onClick={currentStep === steps.length ? () => console.log("Submit:", formData) : nextStep}
                 className="gradient-button"
               >
                 {currentStep === steps.length ? (
-                  'Confirm Booking'
+                  ""
                 ) : (
                   <>
                     Next
@@ -360,11 +473,17 @@ const submitForm = async () => {
                   </>
                 )}
               </Button>
-              <Button onClick={submitForm} disabled={loading}>{loading ? "Submitting..." : "Confirm Booking"}</Button>
-
             </div>
           </CardContent>
         </Card>
+        {error && <div className="text-red-500 text-center mt-4">{error}</div>}
+        {currentStep === steps.length && (
+          <div className="flex justify-center items-center mt-5">
+            <Button onClick={submitForm} disabled={loading} className="gradient-button">
+              {loading ? "Submitting..." : "Confirm Booking"}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )
