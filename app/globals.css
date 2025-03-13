@@ -48,7 +48,19 @@
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
+.gradient-cardss{
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.gradient-cardss img{
+  border-radius: 0.375rem;
+}
 .gradient-button:hover {
   background-color: rgba(0, 0, 0, 0.7);
   transform: translateY(-1px);

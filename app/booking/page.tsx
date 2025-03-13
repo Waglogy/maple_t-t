@@ -1,491 +1,393 @@
 "use client"
+
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import * as React from "react"
-import { ChevronRight, ChevronLeft, Calendar, Users, Plane, CreditCard } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { cn } from "@/lib/utils"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from 'react-toastify'
 
-const validateCreditCard = (number: string) => {
-  // Remove any spaces or dashes
-  const cleanNumber = number.replace(/[\s-]/g, "")
-
-  // Check if the number contains only digits
-  if (!/^\d+$/.test(cleanNumber)) return false
-
-  // Check length (most cards are 13-19 digits)
-  if (cleanNumber.length < 13 || cleanNumber.length > 19) return false
-
-  // Luhn algorithm (mod 10)
-  let sum = 0
-  let isEven = false
-
-  // Loop through values starting from the rightmost digit
-  for (let i = cleanNumber.length - 1; i >= 0; i--) {
-    let digit = Number.parseInt(cleanNumber.charAt(i))
-
-    if (isEven) {
-      digit *= 2
-      if (digit > 9) {
-        digit -= 9
-      }
-    }
-
-    sum += digit
-    isEven = !isEven
-  }
-
-  return sum % 10 === 0
+// Match the schema exactly
+interface BookingFormData {
+  package: string; // This will be the package ID
+  startDate: string;
+  numberOfPeople: {
+    adults: number;
+    children: number;
+  };
+  totalAmount: number;
+  contactDetails: {
+    phone: string;
+    alternatePhone?: string;
+    email: string;
+  };
+  specialRequirements?: string;
+  // These will be handled by backend
+  bookingStatus?: 'pending' | 'confirmed' | 'cancelled';
+  paymentStatus?: 'pending' | 'completed' | 'failed';
 }
 
-const steps = [
-  { id: 1, name: "Package", icon: Plane },
-  { id: 2, name: "Date & Travelers", icon: Calendar },
-  { id: 3, name: "Details", icon: Users },
-  { id: 4, name: "Payment", icon: CreditCard },
-]
+interface PackageDetails {
+  _id: string;
+  title: string;
+  price: {
+    amount: number;
+    currency: string;
+  };
+  duration: {
+    days: number;
+    nights: number;
+  };
+}
+
+interface BookingResponse {
+  success: boolean;
+  data: {
+    _id: string;
+    paymentStatus: string;
+  };
+}
 
 export default function BookingPage() {
-  const [packages, setPackages] = useState([])
-  const [loadingPackages, setLoadingPackages] = useState(true)
-  const [packageError, setPackageError] = useState("")
-  useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const response = await fetch("https://maplesserver.vercel.app/api/package") // Use local API
-        const result = await response.json()
-        console.log("Fetched Packages:", result)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const packageId = searchParams.get('packageId');
+  const packageTitle = searchParams.get('title');
 
-        // Extract the 'data' array
-        if (response.ok && Array.isArray(result.data)) {
-          setPackages(result.data) // Set only the 'data' array
+  const [packageDetails, setPackageDetails] = useState<PackageDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const [formData, setFormData] = useState<BookingFormData>({
+    package: packageId || '',
+    startDate: '',
+    numberOfPeople: {
+      adults: 1,
+      children: 0
+    },
+    totalAmount: 0,
+    contactDetails: {
+      phone: '',
+      alternatePhone: '',
+      email: ''
+    },
+    specialRequirements: ''
+  });
+
+  // Add new state for booking confirmation modal
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [bookingId, setBookingId] = useState<string>('');
+
+  useEffect(() => {
+    if (!packageId) {
+      toast.error('No package selected');
+      router.push('/packages');
+      return;
+    }
+
+    const fetchPackageDetails = async () => {
+      try {
+        const response = await fetch(`https://maple-server-e7ye.onrender.com/api/packages/${packageId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch package details');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setPackageDetails(data.data);
+          setFormData(prev => ({
+            ...prev,
+            package: data.data._id,
+            totalAmount: data.data.price.amount
+          }));
         } else {
-          setPackageError("Invalid response format")
+          throw new Error(data.message);
         }
       } catch (error) {
-        console.error("Error fetching packages:", error)
-        setPackageError("Network error. Please try again.")
+        toast.error('Failed to load package details');
+        router.push('/packages');
       } finally {
-        setLoadingPackages(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchPackages()
-  }, [])
+    fetchPackageDetails();
+  }, [packageId]);
 
-  const router = useRouter()
-  const [currentStep, setCurrentStep] = React.useState(1)
-  const [formData, setFormData] = React.useState({
-    package: "",
-    departure: "",
-    arrival: "",
-    travelDate: "",
-    adults: "2",
-    children: "0",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    cardName: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const calculateTotalAmount = () => {
+    if (!packageDetails) return 0;
+    const { adults, children } = formData.numberOfPeople;
+    return packageDetails.price.amount * (adults + (children * 0.5));
+  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
-
-  const submitForm = async () => {
-    setLoading(true)
-    setError("")
-    setSuccess("")
-
-    // Validate required fields
-    if (
-      !formData.package ||
-      !formData.departure ||
-      !formData.arrival ||
-      !formData.travelDate ||
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.cardName ||
-      !formData.cardNumber ||
-      !formData.expiryDate ||
-      !formData.cvv
-    ) {
-      setError("Please fill in all required fields")
-      setLoading(false)
-      return
-    }
-
-    // Validate credit card
-    if (!validateCreditCard(formData.cardNumber)) {
-      setError("Please enter a valid credit card number")
-      setLoading(false)
-      return
-    }
-
-    // Format the data exactly as required by the API
-    const bookingData = {
-      package: formData.package,
-      departure: formData.departure,
-      arrival: formData.arrival,
-      travelDate: formData.travelDate,
-      adults: Number(formData.adults),
-      children: Number(formData.children),
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone,
-      email: formData.email,
-      cardName: formData.cardName,
-      cardNumber: formData.cardNumber.replace(/\s/g, ""), // Remove spaces before sending
-      expiryDate: formData.expiryDate,
-      cvv: formData.cvv,
-      status: "Confirmed",
-    }
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      console.log("Sending booking data:", bookingData) // Debug log
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please login to make a booking');
+        router.push('/login');
+        return;
+      }
 
-      const response = await fetch("https://maplesserver.vercel.app/api/booking", {
-        method: "POST",
+      const totalAmount = calculateTotalAmount();
+      const bookingData = {
+        ...formData,
+        totalAmount,
+        startDate: new Date(formData.startDate).toISOString(),
+        paymentStatus: 'pending'
+      };
+
+      const response = await fetch('https://maple-server-e7ye.onrender.com/api/bookings', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(bookingData),
-      })
+        body: JSON.stringify(bookingData)
+      });
 
-      // Get the response text first
-      const responseText = await response.text()
-      console.log("API Response:", responseText) // Debug log
+      const data: BookingResponse = await response.json();
 
-      // Try to parse it as JSON
-      let data
-      try {
-        data = JSON.parse(responseText)
-      } catch (e) {
-        console.error("Failed to parse response as JSON:", responseText)
-        throw new Error("Invalid JSON response from server")
-      }
-
-      if (response.ok) {
-        setSuccess("Booking Successful! We'll contact you soon.")
-        alert("Thank you for booking! We will send you a confirmation mail soon.")
-        router.push("/home")
+      if (data.success) {
+        setBookingId(data.data._id);
+        // Store booking details in localStorage for payment reference
+        localStorage.setItem('currentBooking', JSON.stringify({
+          bookingId: data.data._id,
+          amount: totalAmount,
+          packageTitle: packageTitle
+        }));
+        setShowConfirmation(true);
+        toast.success('Booking created successfully!');
       } else {
-        // Show the specific error message from the API
-        setError(data.message || data.error || "Failed to create booking. Please try again.")
-        console.error("API Error:", data)
+        throw new Error(data.message);
       }
-    } catch (err) {
-      console.error("Booking error:", err)
-      setError(err.message || "Network error. Please try again.")
-    } finally {
-      setLoading(false)
+    } catch (error) {
+      toast.error('Failed to create booking');
     }
-  }
+  };
 
-  const nextStep = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length))
-  }
+  const handlePaymentRedirect = () => {
+    if (bookingId) {
+      const totalAmount = calculateTotalAmount();
+      router.push(`/booking/${bookingId}/payment?amount=${totalAmount}&bookingId=${bookingId}`);
+    }
+  };
 
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1))
-  }
-
-  return (
-    <div className="pt-24 mt-8 min-h-screen bg-gradient-to-br from-[#f8f7da]/50 via-white/50 to-[#f8f7da]/50">
-      <div className="container mx-auto px-4 pb-12">
-        <h1 className="text-4xl font-bold text-center mb-8">
-          <span className="text-zinc-800 dark:text-white">Book Your Journey</span>
-        </h1>
-
-        {/* Progress Steps */}
-        <div className="mb-12">
-          <div className="flex items-center justify-center space-x-4 md:space-x-8">
-            {steps.map((step) => (
-              <div
-                key={step.id}
-                className={cn(
-                  "flex items-center",
-                  currentStep > step.id && "text-[#f45201]",
-                  currentStep === step.id && "text-[#f45201] font-semibold",
-                  currentStep < step.id && "text-gray-400",
-                )}
-              >
-                <div className="hidden md:flex items-center">
-                  <step.icon className="w-5 h-5 mr-2" />
-                  <span>{step.name}</span>
-                  {step.id !== steps.length && <ChevronRight className="w-5 h-5 mx-4" />}
-                </div>
-                <div className="flex md:hidden items-center justify-center w-8 h-8 rounded-full border-2 border-current">
-                  {step.id}
-                </div>
+  // Confirmation Modal Component
+  const BookingConfirmationModal = () => {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+          <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
+          <p className="text-gray-600 mb-6">
+            Your booking has been successfully created. Please complete the payment to confirm your reservation.
+          </p>
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
               </div>
-            ))}
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700">
+                  Payment Status: <span className="font-semibold">Not Paid</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={() => setShowConfirmation(false)}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            >
+              Close
+            </button>
+            <button
+              onClick={handlePaymentRedirect}
+              className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-dark"
+            >
+              Complete Payment
+            </button>
           </div>
         </div>
+      </div>
+    );
+  };
 
-        {/* Form Steps */}
-        <Card className="max-w-4xl mx-auto backdrop-blur-md bg-white/75">
-          <CardContent className="p-6">
-            {/* Step 1: Package Selection */}
-            {currentStep === 1 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold mb-4">Select Your Package</h2>
-                <RadioGroup
-                  defaultValue={formData.package}
-                  onValueChange={(value) => setFormData({ ...formData, package: value })}
-                >
-                  <div className="grid gap-4">
-                    {loadingPackages ? (
-                      <p>Loading packages...</p>
-                    ) : packageError ? (
-                      <p className="text-red-500">{packageError}</p>
-                    ) : packages.length > 0 ? (
-                      packages.map((pkg) => (
-                        <Label
-                          key={pkg.id}
-                          htmlFor={pkg.id}
-                          className="relative flex cursor-pointer rounded-lg border p-4 hover:bg-gray-50"
-                        >
-                          <RadioGroupItem value={pkg.title} id={pkg.title} className="mt-1" />
-                          <div className="ml-4">
-                            <span className="block text-gray-500">{pkg.title}</span>
-                            <span className="block text-sm text-gray-500">{pkg.description}</span>
-                            <span className="block mt-1 font-semibold text-[#f45201]">
-                              ₹{pkg.price.toLocaleString("en-IN")}
-                            </span>
-                          </div>
-                        </Label>
-                      ))
-                    ) : (
-                      <p>No packages available.</p>
-                    )}
-                  </div>
-                </RadioGroup>
-              </div>
-            )}
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
-            {/* Step 2: Date & Travelers */}
-            {currentStep === 2 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold mb-4">Choose Date & Travelers</h2>
-                <div className="grid gap-4">
-                  {/* Departure Date */}
-                  <div>
-                    <Label htmlFor="departure">Departure Date</Label>
-                    <Input
-                      type="date"
-                      id="departure"
-                      name="departure"
-                      value={formData.departure}
-                      onChange={handleInputChange}
-                      min={new Date().toISOString().split("T")[0]}
-                    />
-                  </div>
-
-                  {/* Arrival Date */}
-                  <div>
-                    <Label htmlFor="arrival">Arrival Date</Label>
-                    <Input
-                      type="date"
-                      id="arrival"
-                      name="arrival"
-                      value={formData.arrival}
-                      onChange={handleInputChange}
-                      min={formData.departure || new Date().toISOString().split("T")[0]}
-                    />
-                  </div>
-
-                  {/* Preferred Travel Date */}
-                  <div>
-                    <Label htmlFor="travelDate">Preferred Travel Date</Label>
-                    <Input
-                      type="date"
-                      id="travelDate"
-                      name="travelDate"
-                      value={formData.travelDate}
-                      onChange={handleInputChange}
-                      min={formData.departure || new Date().toISOString().split("T")[0]}
-                      max={formData.arrival}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Adults */}
-                    <div>
-                      <Label htmlFor="adults">Adults</Label>
-                      <Select
-                        value={formData.adults}
-                        onValueChange={(value) => setFormData({ ...formData, adults: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[1, 2, 3, 4, 5, 6].map((num) => (
-                            <SelectItem key={num} value={num.toString()}>
-                              {num} {num === 1 ? "Adult" : "Adults"}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Children */}
-                    <div>
-                      <Label htmlFor="children">Children</Label>
-                      <Select
-                        value={formData.children}
-                        onValueChange={(value) => setFormData({ ...formData, children: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[0, 1, 2, 3, 4].map((num) => (
-                            <SelectItem key={num} value={num.toString()}>
-                              {num} {num === 1 ? "Child" : "Children"}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Personal Details */}
-            {currentStep === 3 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold mb-4">Personal Details</h2>
-                <div className="grid gap-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleInputChange} />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleInputChange} />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Payment */}
-            {currentStep === 4 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold mb-4">Payment Details</h2>
-                <div className="grid gap-4">
-                  <div>
-                    <Label htmlFor="cardName">Name on Card</Label>
-                    <Input id="cardName" name="cardName" value={formData.cardName} onChange={handleInputChange} />
-                  </div>
-                  <div>
-                    <Label htmlFor="cardNumber">Card Number</Label>
-                    <Input
-                      id="cardNumber"
-                      name="cardNumber"
-                      value={formData.cardNumber}
-                      onChange={(e) => {
-                        // Remove any non-digit characters
-                        const value = e.target.value.replace(/\D/g, "")
-                        // Add spaces every 4 digits
-                        const formatted = value.replace(/(\d{4})(?=\d)/g, "$1 ")
-                        setFormData({ ...formData, cardNumber: formatted })
-                      }}
-                      maxLength={19} // 16 digits + 3 spaces
-                      className={
-                        !formData.cardNumber || validateCreditCard(formData.cardNumber)
-                          ? ""
-                          : "border-red-500 focus:ring-red-500"
-                      }
-                    />
-                    {formData.cardNumber && !validateCreditCard(formData.cardNumber) && (
-                      <p className="text-sm text-red-500 mt-1">Please enter a valid credit card number</p>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="expiryDate">Expiry Date</Label>
-                      <Input
-                        id="expiryDate"
-                        name="expiryDate"
-                        placeholder="MM/YY"
-                        value={formData.expiryDate}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="cvv">CVV</Label>
-                      <Input id="cvv" name="cvv" value={formData.cvv} onChange={handleInputChange} maxLength={3} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentStep === 1}
-                className="gradient-button bg-transparent"
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Previous
-              </Button>
-              <Button
-                onClick={currentStep === steps.length ? () => console.log("Submit:", formData) : nextStep}
-                className="gradient-button"
-              >
-                {currentStep === steps.length ? (
-                  ""
-                ) : (
-                  <>
-                    Next
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        {error && <div className="text-red-500 text-center mt-4">{error}</div>}
-        {currentStep === steps.length && (
-          <div className="flex justify-center items-center mt-5">
-            <Button onClick={submitForm} disabled={loading} className="gradient-button">
-              {loading ? "Submitting..." : "Confirm Booking"}
-            </Button>
+  return (<>
+  <section 
+  className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center" 
+  style={{ backgroundImage: "url('/3.png')" }}
+>
+        <div className="absolute inset-0 flex items-center justify-center text-white">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl md:text-6xl font-bold"> {packageTitle}</h1>
+            <p className="text-xl max-w-2xl mx-auto">
+              Let's plan your perfect journey together
+            </p>
           </div>
-        )}
+        </div>
+      </section>
+    <div className="max-w-4xl mx-auto p-6 ">
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h1 className="text-2xl font-bold mb-6">Book Your Package</h1>
+
+        {/* Package Summary */}
+        <div className="bg-gray-50 p-4 rounded-md mb-6">
+          <h2 className="text-lg font-semibold mb-2">{packageTitle}</h2>
+          {packageDetails && (
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-gray-600">Duration</p>
+                <p className="font-medium">{packageDetails.duration.days} Days, {packageDetails.duration.nights} Nights</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Price per person</p>
+                <p className="font-medium">{packageDetails.price.currency} {packageDetails.price.amount.toLocaleString()}</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Start Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+            <input
+              type="date"
+              min={new Date().toISOString().split('T')[0]}
+              value={formData.startDate}
+              onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+              required
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+
+          {/* Number of People */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
+              <input
+                type="number"
+                min="1"
+                value={formData.numberOfPeople.adults}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  numberOfPeople: {
+                    ...formData.numberOfPeople,
+                    adults: parseInt(e.target.value)
+                  },
+                  totalAmount: calculateTotalAmount()
+                })}
+                required
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.numberOfPeople.children}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  numberOfPeople: {
+                    ...formData.numberOfPeople,
+                    children: parseInt(e.target.value)
+                  },
+                  totalAmount: calculateTotalAmount()
+                })}
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+          </div>
+
+          {/* Contact Details */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input
+              type="email"
+              value={formData.contactDetails.email}
+              onChange={(e) => setFormData({
+                ...formData,
+                contactDetails: { ...formData.contactDetails, email: e.target.value }
+              })}
+              required
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+              <input
+                type="tel"
+                value={formData.contactDetails.phone}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  contactDetails: { ...formData.contactDetails, phone: e.target.value }
+                })}
+                required
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Alternate Phone</label>
+              <input
+                type="tel"
+                value={formData.contactDetails.alternatePhone}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  contactDetails: { ...formData.contactDetails, alternatePhone: e.target.value }
+                })}
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+          </div>
+
+          {/* Special Requirements */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Special Requirements</label>
+            <textarea
+              value={formData.specialRequirements}
+              onChange={(e) => setFormData({ ...formData, specialRequirements: e.target.value })}
+              rows={3}
+              className="w-full p-2 border rounded-md"
+              placeholder="Any special requests or requirements..."
+            />
+          </div>
+
+          {/* Total Amount */}
+          <div className="border-t pt-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-gray-600">Total Amount</p>
+                <p className="text-2xl font-bold">
+                  {packageDetails?.price.currency} {calculateTotalAmount().toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="submit"
+                className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-dark"
+              >
+                Proceed to Payment
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
-  )
-}
 
+    {/* Render confirmation modal when showConfirmation is true */}
+    {showConfirmation && <BookingConfirmationModal />}
+    </>
+  );
+}

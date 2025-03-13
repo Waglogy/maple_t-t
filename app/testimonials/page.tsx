@@ -1,16 +1,131 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Loader, Star } from "lucide-react";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+interface Testimonial {
+  _id: string;
+  name: string;
+  testimonial: string;
+  rating: number;
+  isApproved: boolean;
+  createdAt: string;
+}
+
+interface TestimonialFormData {
+  name: string;
+  testimonial: string;
+  rating: number;
+}
 
 export default function TestimonialsPage() {
-  // State for controlling the modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [formData, setFormData] = useState<TestimonialFormData>({
+    name: "",
+    testimonial: "",
+    rating: 5
+  });
+  const [hoverRating, setHoverRating] = useState(0);
 
-  // Function to toggle the modal
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  // Fetch approved testimonials
+  const fetchTestimonials = async () => {
+    try {
+      const response = await fetch('https://maple-server-e7ye.onrender.com/api/testimonials/approved');
+      const data = await response.json();
+      
+      if (response.ok) {
+        setTestimonials(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRatingClick = (rating: number) => {
+    setFormData({ ...formData, rating });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch('https://maple-server-e7ye.onrender.com/api/testimonials', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(
+          "Thank you for your testimonial! It will be displayed after review.",
+          { autoClose: 5000 }
+        );
+        setFormData({ name: "", testimonial: "", rating: 5 });
+        setIsModalOpen(false);
+      } else {
+        throw new Error(data.message || 'Failed to submit testimonial');
+      }
+    } catch (error) {
+      toast.error('Failed to submit testimonial. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Star Rating Component
+  const StarRating = ({ 
+    rating, 
+    hover, 
+    onRatingClick, 
+    onHoverIn, 
+    onHoverOut,
+    interactive = true
+  }: {
+    rating: number;
+    hover?: number;
+    onRatingClick?: (rating: number) => void;
+    onHoverIn?: (rating: number) => void;
+    onHoverOut?: () => void;
+    interactive?: boolean;
+  }) => {
+    return (
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`w-6 h-6 ${
+              star <= (hover || rating)
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'text-gray-300'
+            } ${interactive ? 'cursor-pointer' : ''}`}
+            onClick={() => interactive && onRatingClick?.(star)}
+            onMouseEnter={() => interactive && onHoverIn?.(star)}
+            onMouseLeave={() => interactive && onHoverOut?.()}
+          />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -37,63 +152,30 @@ export default function TestimonialsPage() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">What Our Clients Say</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Sample Testimonial 1 */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <p className="text-gray-600 mb-4">
-                "Maple Leaf Tours provided an unforgettable experience. The attention to detail and personalized service were exceptional. Every moment was memorable!"
-              </p>
-              <div className="flex items-center">
-                <Image
-                  src="/profile.jpg"
-                  alt="Client 1"
-                  width={50}
-                  height={50}
-                  className="rounded-full"
-                />
-                <div className="ml-4">
-                  <h3 className="text-xl font-semibold">Bhupesh Sharma</h3>
-                  <p className="text-gray-500">Traveler</p>
+            {testimonials.map((testimonial) => (
+              <div key={testimonial._id} className="bg-white p-6 rounded-lg shadow-lg">
+                <div className="mb-4">
+                  <StarRating 
+                    rating={testimonial.rating} 
+                    interactive={false}
+                  />
+                </div>
+                <p className="text-gray-600 mb-4">"{testimonial.testimonial}"</p>
+                <div className="flex items-center">
+                  <Image
+                    src="/profile.jpg"
+                    alt={testimonial.name}
+                    width={50}
+                    height={50}
+                    className="rounded-full"
+                  />
+                  <div className="ml-4">
+                    <h3 className="text-xl font-semibold">{testimonial.name}</h3>
+                    <p className="text-gray-500">Traveler</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* Sample Testimonial 2 */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <p className="text-gray-600 mb-4">
-                "The luxury accommodations and local expertise made our trip to the Eastern Himalayas truly special. The tour guide was knowledgeable, and the experiences were authentic."
-              </p>
-              <div className="flex items-center">
-                <Image
-                  src="/profile.jpg"
-                  alt="Client 2"
-                  width={50}
-                  height={50}
-                  className="rounded-full"
-                />
-                <div className="ml-4">
-                  <h3 className="text-xl font-semibold">Avishek Adhikari</h3>
-                  <p className="text-gray-500">Traveler</p>
-                </div>
-              </div>
-            </div>
-            {/* Sample Testimonial 3 */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <p className="text-gray-600 mb-4">
-                "I highly recommend Maple Leaf Tours for anyone looking to explore the beauty of the Eastern Himalayas. The trip was well-planned, and every detail was taken care of."
-              </p>
-              <div className="flex items-center">
-                <Image
-                  src="/profile.jpg"
-                  alt="Client 3"
-                  width={50}
-                  height={50}
-                  className="rounded-full"
-                />
-                <div className="ml-4">
-                  <h3 className="text-xl font-semibold">Roshan Chettri</h3>
-                  <p className="text-gray-500">Traveler</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -111,19 +193,34 @@ export default function TestimonialsPage() {
             size="lg"
             variant="outline"
             className="bg-transparent text-black hover:bg-white hover:text-[#f45201]"
-            onClick={toggleModal}
+            onClick={() => setIsModalOpen(true)}
           >
             Submit Your Testimonial
           </Button>
         </div>
       </section>
 
-      {/* Popup Form Modal */}
+      {/* Testimonial Form Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
-            <h3 className="text-2xl font-semibold text-center mb-6">Submit Your Testimonial</h3>
-            <form>
+            <h3 className="text-2xl font-semibold text-center mb-6">
+              Submit Your Testimonial
+            </h3>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Your Rating
+                </label>
+                <StarRating
+                  rating={formData.rating}
+                  hover={hoverRating}
+                  onRatingClick={handleRatingClick}
+                  onHoverIn={setHoverRating}
+                  onHoverOut={() => setHoverRating(0)}
+                />
+              </div>
+
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2" htmlFor="name">
                   Your Name
@@ -131,36 +228,64 @@ export default function TestimonialsPage() {
                 <input
                   type="text"
                   id="name"
-                  className="w-full p-3 border border-gray-300 rounded-md"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your name"
+                  required
+                  disabled={loading}
                 />
               </div>
+
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2" htmlFor="testimonial">
                   Your Testimonial
                 </label>
                 <textarea
                   id="testimonial"
-                  className="w-full p-3 border border-gray-300 rounded-md" rows = {4}
+                  name="testimonial"
+                  value={formData.testimonial}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  rows={4}
                   placeholder="Share your experience with us"
+                  required
+                  disabled={loading}
                 ></textarea>
               </div>
+
               <div className="flex justify-end">
                 <Button
+                  type="button"
                   variant="outline"
-                  onClick={toggleModal}
+                  onClick={() => setIsModalOpen(false)}
                   className="mr-4 bg-transparent text-black hover:bg-white hover:text-[#f45201]"
+                  disabled={loading}
                 >
                   Close
                 </Button>
-                <Button size="lg" variant="outline" className="bg-transparent text-black hover:bg-white hover:text-[#f45201]">
-                  Submit
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-transparent text-black hover:bg-white hover:text-[#f45201]"
+                >
+                  {loading ? (
+                    <div className="flex items-center">
+                      <Loader className="animate-spin mr-2" size={20} />
+                      Submitting...
+                    </div>
+                  ) : (
+                    'Submit'
+                  )}
                 </Button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      <ToastContainer />
     </div>
   );
 }

@@ -1,9 +1,100 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MapPin } from 'lucide-react'
+import { Mail, Phone, MapPin, Loader } from 'lucide-react'
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+interface ContactFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  message: string;
+}
 
 export default function ContactPage() {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<ContactFormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const validateForm = () => {
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return false;
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error("Please enter a valid 10-digit phone number");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("https://maple-server-e7ye.onrender.com/api/contacts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        toast.success("Thank you for your enquiry! We will contact you soon.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+        // Reset form
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          message: ""
+        });
+      } else {
+        throw new Error("Failed to send message");
+      }
+    } catch (error) {
+      console.error("Contact form error:", error);
+      toast.error("Failed to send message. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="pt-16">
       {/* Hero Section */}
@@ -68,38 +159,83 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="bg-white p-8 rounded-lg shadow-lg">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">First Name</label>
-                    <Input placeholder="John" />
+                    <Input 
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      placeholder="John" 
+                      required
+                      disabled={loading}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Last Name</label>
-                    <Input placeholder="Doe" />
+                    <Input 
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      placeholder="Doe" 
+                      required
+                      disabled={loading}
+                    />
                   </div>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-2">Email</label>
-                  <Input type="email" placeholder="john@example.com" />
+                  <Input 
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="john@example.com" 
+                    required
+                    disabled={loading}
+                  />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-2">Phone</label>
-                  <Input placeholder="+91 (123) 456-7890" />
+                  <Input 
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="10-digit mobile number" 
+                    required
+                    disabled={loading}
+                  />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-2">Message</label>
                   <Textarea 
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
                     placeholder="Tell us about your travel plans..."
                     className="min-h-[150px]"
+                    required
+                    disabled={loading}
                   />
                 </div>
                 
-                <Button className="w-full gradient-button">
-                  Send Message
+                <Button 
+                  type="submit"
+                  className="w-full gradient-button"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <Loader className="animate-spin mr-2" size={20} />
+                      Sending...
+                    </div>
+                  ) : (
+                    'Send Message'
+                  )}
                 </Button>
               </form>
             </div>
@@ -108,14 +244,9 @@ export default function ContactPage() {
       </section>
 
       {/* Map Section */}
-      <section className="h-[400px] bg-[#f8f7da]">
-        <div className="w-full h-full">
-          {/* Replace with actual map implementation */}
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-[#f8f7da] to-white">
-            <p className="text-gray-500">Interactive Map Coming Soon</p>
-          </div>
-        </div>
-      </section>
+      
+
+      <ToastContainer />
     </div>
   )
 }

@@ -111,7 +111,7 @@ const sikkimData: Record<string, DistrictData> = {
       {
         name: "Pelling",
         description:
-          "Pelling is a popular tourist destination offering stunning views of Kanchenjunga, the world's third-highest peak. It is home to the 18th-century Pemayangtse Monastery, a key center of Tibetan Buddhism. The Rabdentse Ruins, the former royal capital of Sikkim, provide a glimpse into the region’s royal past. The annual Khangchendzonga Festival celebrates the cultural heritage through traditional music and dance.",
+          "Pelling is a popular tourist destination offering stunning views of Kanchenjunga, the world's third-highest peak. It is home to the 18th-century Pemayangtse Monastery, a key center of Tibetan Buddhism. The Rabdentse Ruins, the former royal capital of Sikkim, provide a glimpse into the region's royal past. The annual Khangchendzonga Festival celebrates the cultural heritage through traditional music and dance.",
         coordinates: { x: 250, y: 520 },
       },
       {
@@ -141,11 +141,22 @@ export default function SikkimInteractiveMap({
 }: SikkimMapProps) {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null)
+  const [showFullContent, setShowFullContent] = useState(false)
 
   const handleLocationClick = (location: Location, district: string) => {
     setSelectedLocation(location)
     setSelectedDistrict(district)
   }
+
+  const sikkimIntroContent = `Situated in the eastern Himalayas, Sikkim is bounded in the north by the vast stretches of the Tibetan Plateau and to its west lies the kingdom of Nepal. In the east it is bounded by Bhutan and the Chumbi Valley of Tibet, and India stretches along its southern boundary. With an area of 2,818 square miles and measuring approximately 70 miles from north to south, Sikkim is a land of varied elevations ranging from 800 to over 28,000 feet above sea-level.
+
+The population consists of approximately 1,72,000 inhabitants, of which over 90 percent live in the rural areas. The three main communities in Sikkim are the Lepchas, the Bhutias and the Nepalis. The Lepchas-who call themselves "Rong Pa" (Ravine Folk), are believed to have been the original inhabitants of Sikkim.
+
+Mahayana Buddhism is the State Religion of Sikkim, with 67 monasteries including the historically significant ones at Pemayangtse, Tashiding, Phensang, Phodang, Rumtek and Ralang. The principal languages are Bhutia, Nepali and Lepcha, with English used extensively for official communications.
+
+As a hereditary monarchy, Sikkim's development focuses on agriculture, producing cardamom, oranges, potatoes and apples as principal exports. The country also has significant forest resources, hydel power projects, and minerals including copper, coal, graphite, gypsum and iron.
+
+For tourists, the recommended seasons are between mid-February and late May, during the Khang-chen-dzod-nga worship celebrations in early autumn, and from October to December. The scenic magnificence makes almost anywhere in Sikkim perfect for picnics and outdoor activities.`
 
   return (
     <div className={`container mx-auto p-4 space-y-6 ${className}`}>
@@ -218,8 +229,21 @@ export default function SikkimInteractiveMap({
               <CardHeader>
                 <CardTitle>Welcome to Sikkim</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p>Click on any location marker to view details about tourist attractions.</p>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">
+                  {showFullContent 
+                    ? sikkimIntroContent 
+                    : sikkimIntroContent.slice(0, 300) + "..."}
+                </p>
+                <button 
+                  onClick={() => setShowFullContent(!showFullContent)}
+                  className="text-primary hover:underline font-medium"
+                >
+                  {showFullContent ? "Read Less" : "Read More"}
+                </button>
+                <p className="text-sm text-muted-foreground mt-4">
+                  Click on any location marker to view details about tourist attractions.
+                </p>
               </CardContent>
             </Card>
           )}

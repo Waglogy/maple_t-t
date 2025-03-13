@@ -1,263 +1,286 @@
-"use client";
+"use client"; // Mark this file as a client component
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Carousel } from "@/components/carousel"
-import { PackageCard } from "@/components/package-card"
-import Image from "next/image"
-import Link from "next/link"
-import { X } from "lucide-react";
+import { useEffect,useState } from "react";
+import { useRouter } from "next/navigation"; // Make sure this is only used in the client component
+import { Button } from "@/components/ui/button";
+import { Carousel } from "@/components/carousel";
+import { PackageCard } from "@/components/package-card";
+import Image from "next/image";
+import Link from "next/link";
+import SikkimMap from "@/components/SikkimMap";
+import PhotoGallery from "@/components/PhotoGallery";
+import { toast } from 'react-toastify';
 
-
-
-
-const packages = [
-  {
-    title: "Sikkim Mountain Retreat",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
-    price: 89999,
-    duration: "5 Days | All Inclusive",
-    features: ["5-star accommodation", "Private tours", "Luxury transport", "Gourmet dining"]
-  },
-  {
-    title: "Bhutan Heritage Tour",
-    image: "https://images.unsplash.com/photo-1553856622-d1b352e9a211",
-    price: 149999,
-    duration: "7 Days | Premium Package",
-    features: ["Luxury dzong stays", "Cultural experiences", "Private guide", "Traditional spa"]
-  },
-  {
-    title: "Nepal Valley Explorer",
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa",
-    price: 99999,
-    duration: "6 Days | Deluxe Package",
-    features: ["Heritage hotels", "Temple tours", "Mountain flights", "Authentic cuisine"]
-  }
-]
-
-const luxuryStays = [
-  {
-    name: "Taj Tashi Bhutan",
-    image: "https://images.unsplash.com/photo-1582719508461-905c673771fd",
-    description: "Experience Bhutanese architecture with modern luxury"
-  },
-  {
-    name: "Mayfair Gangtok",
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945",
-    description: "Luxury amid the Himalayas"
-  },
-  {
-    name: "Dwarika's Kathmandu",
-    image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb",
-    description: "Heritage luxury in Nepal"
-  },
-  {
-    name: "Elgin Mount Pandim",
-    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4",
-    description: "Heritage hotel with mountain views"
-  },
-  {
-    name: "The Oberoi Cecil",
-    image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-    description: "Colonial grandeur meets modern comfort"
-  },
-  {
-    name: "Uma Paro Bhutan",
-    image: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c",
-    description: "Intimate luxury in the heart of Paro"
-  }
-]
-
-const vehicles = [
-  {
-    name: "Mercedes S-Class",
-    image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888",
-    description: "Ultimate luxury sedan"
-  },
-  {
-    name: "Toyota Land Cruiser",
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
-    description: "Premium SUV for mountain terrain"
-  },
-  {
-    name: "BMW 7 Series",
-    image: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
-    description: "Executive luxury car"
-  },
-  {
-    name: "Range Rover",
-    image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6",
-    description: "Luxury all-terrain vehicle"
-  }
-]
+interface Package {
+  _id: string;
+  title: string;
+  description: string;
+  destination: string;
+  duration: {
+    days: number;
+    nights: number;
+  };
+  price: {
+    amount: number;
+    currency: string;
+  };
+  images: Array<{
+    url: string;
+    caption: string;
+  }>;
+  inclusions: string[];
+  createdAt: string;
+  featured: boolean;
+  pdfBrochure?: {
+    url: string;
+    filename: string;
+  };
+}
 
 const slides = [
   {
     url: "/1.png",
-    title: "Sikkim Mountains",
-    description: "Experience the majesty of the Eastern Himalayas"
+    title: "Discover Sacred Sikkim",
+    description: "Journey through ancient monasteries and mystical landscapes of the Himalayan realm",
+    buttonText: "Explore Sacred Tours"
   },
   {
     url: "/2.png",
-    title: "Nepal Temples",
-    description: "Discover ancient spiritual heritage"
+    title: "Cultural Heritage Tours",
+    description: "Experience the living traditions of Lepcha, Bhutia, and Nepali communities",
+    buttonText: "View Heritage Packages"
   },
   {
     url: "/3.png",
-    title: "Kalimpong Hills",
-    description: "Explore the scenic beauty of Kalimpong"
+    title: "Adventure in Paradise",
+    description: "Trek through pristine valleys, serene lakes, and majestic mountain trails",
+    buttonText: "Find Adventure Tours"
   }
-]
-
+];
 export default function Home() {
+  const [recentPackages, setRecentPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [showPopup, setShowPopup] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowPopup(true);
-    }, 5000); // Show popup after 5 seconds
+    const fetchRecentPackages = async () => {
+      try {
+        const response = await fetch('https://maple-server-e7ye.onrender.com/api/packages');
+        const data = await response.json();
 
-    return () => clearTimeout(timer); // Cleanup on unmount
+        if (data.success) {
+          // Sort packages by createdAt date and take the latest 3
+          const latestPackages = data.data
+            .sort((a: Package, b: Package) => {
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            })
+            .slice(0, 3);
+          
+          setRecentPackages(latestPackages);
+        }
+      } catch (error) {
+        console.error('Error fetching packages:', error);
+        toast.error('Failed to load recent packages');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentPackages();
   }, []);
+
+  const handleExploreClick = () => {
+    router.push('/packages');
+  };
+
   return (
     <div className="pt-100">
       {/* Hero Section with Carousel */}
       <section className="relative h-[100vh]">
         <Carousel slides={slides} />
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-          <div className="text-center text-white space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold">
-            Elegance in Every Journey
-          </h1>
-            <p className="text-xl md:text-2xl max-w-2xl mx-auto">
-              Travel with grace and sophistication—where simplicity meets timeless class.
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-transparent flex items-center justify-center">
+          <div className="text-center text-white space-y-6 px-4 max-w-4xl">
+            <div className="space-y-2">
+              <div className="flex justify-center items-center bg-white rounded-full p-2  ">
+              <p className="text-lg md:text-xl text-[#000000] font-medium uppercase tracking-wider">
+                Welcome to the Land of Mystical Wonders
+              </p>
+              </div>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                {slides[0].title}
+              </h1>
+            </div>
+            <p className="text-xl md:text-2xl max-w-2xl mx-auto font-light">
+              {slides[0].description}
             </p>
-
-            <Button size="lg" className="gradient-button">
-              Explore Packages
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+              <Button 
+                size="lg" 
+                className="gradient-button hover:scale-105 transform transition-transform duration-300 min-w-[200px]"
+                onClick={handleExploreClick}
+              >
+                Explore Packages
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-2 border-white text-black hover:bg-white hover:text-black transition-colors duration-300 min-w-[200px]"
+                asChild
+              >
+                <Link href="/contact">Contact Us</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white shadow-lg rounded-lg p-6 w-[350px] relative border">
-            {/* Close Button (X Icon) */}
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-              onClick={() => setShowPopup(false)}
-            >
-              < X size={24} />
-            </button>
-
-            <h2 className="text-xl font-bold text-center">Exciting News!</h2>
-            <p className="text-gray-700 text-center mt-2">
-              Unlock exclusive offers and personalized travel experiences.
-            </p>
-
-            <div className="flex justify-center mt-4">
-              <Link href="/login">
-                <Button className="gradient-btn">
-                  Login
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
+    
 
       {/* Our Story Section */}
       <section className="py-20 ">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="text-zinc-800">About Us & Our Story</span>
+            <span className="text-zinc-800">About Us & Our Story</span>
           </h2>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h3 className="text-2xl font-semibold text-black">
+              <h3 className="text-2xl font-semibold text-black dark:text-white">
                 About Maple Leafs
               </h3>
-              <p className="text-black">
-                Since our inception, we've been dedicated to providing unparalleled luxury 
-                transportation experiences in Nepal. Our journey began with a simple vision: 
-                to transform ordinary travel into extraordinary memories.
+              <p className="text-black dark:text-white leading-relaxed">
+                At Maple Leafs, we are passionate custodians of Sikkim's rich cultural heritage 
+                and natural splendor. Our journey began with a profound vision: to share the 
+                mystical beauty and ancient traditions of this Himalayan jewel with the world. 
+                As a locally rooted travel curator, we specialize in crafting immersive 
+                experiences that connect travelers with Sikkim's sacred monasteries, pristine 
+                landscapes, and vibrant local communities.
               </p>
-              <h3 className="text-2xl font-semibold text-black">
-                Our Story
+              <h3 className="text-2xl font-semibold text-black dark:text-white">
+                Our Heritage Mission
               </h3>
-              <p className="text-black">
-                Today, we pride ourselves on our fleet of meticulously maintained luxury 
-                vehicles and our team of professional chauffeurs. Whether it's a mountain 
-                expedition, city tour, or airport transfer, we ensure every journey with us 
-                is marked by comfort, safety, and sophistication.
+              <p className="text-black dark:text-white leading-relaxed">
+                We are dedicated to preserving and promoting Sikkim's centuries-old traditions, 
+                from ancient Buddhist monasteries to indigenous Lepcha culture. Our expertly 
+                curated journeys traverse through the land where Mahayana Buddhism flourishes 
+                across 67 historic monasteries, and where the harmonious blend of Lepcha, 
+                Bhutia, and Nepali communities creates a unique cultural tapestry. Whether 
+                it's witnessing the sacred Pang Lhabsol festival, exploring the mystical 
+                Khecheopalri Lake, or experiencing the traditional way of life in remote 
+                mountain villages, we ensure every journey celebrates Sikkim's living heritage.
+              </p>
+              <p className="text-black dark:text-white leading-relaxed">
+                From the ancient capital of Yuksom to the sacred peaks of Khangchendzonga, 
+                our tours are thoughtfully designed to showcase both the tangible and 
+                intangible heritage of Sikkim. We work closely with local communities, 
+                monastery authorities, and cultural experts to provide authentic, respectful, 
+                and enriching travel experiences that contribute to the preservation of 
+                Sikkim's cultural legacy for future generations.
               </p>
               <Button className="gradient-btn" asChild>
-                <Link href="/contact">Contact Us</Link>
+                <Link href="/contact">Explore Our Heritage Tours</Link>
               </Button>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
-                <div className="relative h-[300px] rounded-lg overflow-hidden">
+                <div className="relative h-[300px] rounded-lg overflow-hidden border-2 border-[#f45201]/40 shadow-lg hover:shadow-xl transition-all duration-300">
                   <Image
-                    src="/11.png"
+                    src="/about1.jpg"
                     alt="Scenic mountain drive"
                     fill
-                    className="object-cover hover:scale-110 transition-transform duration-500"
+                    className="object-cover hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
                   />
                 </div>
-                <div className="relative h-[200px] rounded-lg overflow-hidden">
+                <div className="relative h-[200px] rounded-lg overflow-hidden border-2 border-[#f45201]/40 shadow-lg hover:shadow-xl transition-all duration-300">
                   <Image
-                    src="/33.png"
+                    src="/about2.jpg"
                     alt="Luxury vehicle interior"
                     fill
-                    className="object-cover hover:scale-110 transition-transform duration-500"
+                    className="object-cover hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
                   />
                 </div>
               </div>
-              <div className="relative h-[520px] rounded-lg overflow-hidden">
+              <div className="relative h-[520px] rounded-lg overflow-hidden border-2 border-[#f45201]/40 shadow-lg hover:shadow-xl transition-all duration-300">
                 <Image
-                  src="/22.png"
+                  src="/about3.jpg"
                   alt="Buddhist Monastery in Sikkim"
                   fill
-                  className="object-cover hover:scale-110 transition-transform duration-500"
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
                 />
               </div>
             </div>
           </div>
         </div>
       </section>
-    
+      {/* Interactive Map */}
+      <SikkimMap />
 
-
-
-      {/* Top Rated Packages */}
-      <section className="py-20 bg-[#f8f7da]">
+ {/* Top Rated Packages */}
+ <section className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="text-zinc-800 dark:text-white">Top Rated Packages</span>
+            <span className="text-zinc-800 dark:text-white">Latest Packages</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {packages.map((pkg, index) => (
-              <PackageCard
-                key={index}
-                title={pkg.title}
-                image={pkg.image}
-                price={pkg.price}
-                duration={pkg.duration}
-                features={pkg.features}
-                rating={4.9}
-              />
-            ))}
+          
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#f45201]" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {recentPackages.map((pkg) => (
+                <PackageCard
+                  key={pkg._id}
+                  title={pkg.title}
+                  image={pkg.images[0]?.url || '/placeholder.jpg'}
+                  price={pkg.price.amount}
+                  duration={`${pkg.duration.days} Days | ${pkg.duration.nights} Nights`}
+                  features={[
+                    `Destination: ${pkg.destination}`,
+                    ...(pkg.inclusions.slice(0, 3).map(inclusion => inclusion) || [
+                      'All Inclusive Package',
+                      'Luxury Transport',
+                      'Premium Stays'
+                    ])
+                  ]}
+                  rating={4.9}
+                  pdfBrochure={pkg.pdfBrochure}
+                />
+              ))}
+
+              {recentPackages.length === 0 && !loading && (
+                <div className="col-span-3 text-center text-gray-500">
+                  No packages available
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="text-center mt-8">
+            <Button 
+              className="gradient-btn"
+              asChild
+            >
+              <Link href="/packages">View All Packages</Link>
+            </Button>
           </div>
-         
         </div>
       </section>
+
+      {/* photo gallery */}
+     <PhotoGallery/>
+
+
+
+     
     </div>
   )
 }
