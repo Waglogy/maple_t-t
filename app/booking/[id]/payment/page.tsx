@@ -48,10 +48,33 @@ interface ErrorResponse {
   // Add other potential error properties
 }
 
+// Define Razorpay window interface
 declare global {
   interface Window {
-    Razorpay: any; // Or define a proper Razorpay type
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
   }
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => Promise<void>;
+  prefill: {
+    name: string;
+    email: string;
+    contact: string;
+  };
+  modal: {
+    ondismiss: () => void;
+  };
+}
+
+interface RazorpayInstance {
+  open: () => void;
 }
 
 const Checkout = () => {
@@ -71,59 +94,41 @@ const Checkout = () => {
 
   // Use useCallback for the handler function
   const handlePayment = useCallback(async () => {
-    if (!amount || !bookingId) {
-      toast.error('Invalid payment details');
-      return;
-    }
-
-    setLoading(true);
-
     try {
-      // Create order
-      const response = await fetch("https://maple-server-e7ye.onrender.com/api/payment/create-order", {
-        method: "POST",
+      setLoading(true);
+      
+      if (!bookingId || !amount) {
+        toast.error('Invalid payment details');
+        return;
+      }
+
+      const response = await fetch('/api/payment/create-order', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          amount: parseFloat(amount),
-          receipt: `booking_${bookingId}`,
-          currency: "INR"
-        }),
+        body: JSON.stringify({ amount, bookingId }),
       });
 
-      const data: ApiResponse<PaymentResponse> = await response.json();
+      const data: PaymentResponse = await response.json();
 
       if (!data.success) {
         throw new Error(data.message);
       }
 
-      // Initialize Razorpay
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: data.data?.amount,
+      const options: RazorpayOptions = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
+        amount: data.data?.amount || 0,
         currency: "INR",
-        name: "Maple Leaf Tours",
-        description: `Booking ID: ${bookingId}`,
-        order_id: data.data?.id,
-        prefill: {
-          name: user?.firstName ? `${user.firstName} ${user.lastName}` : '',
-          email: user?.email || '',
-          contact: "",
-        },
-        notes: {
-          bookingId: bookingId
-        },
+        name: "Maple Tours",
+        description: "Package Booking Payment",
+        order_id: data.data?.id || '',
         handler: async (response: RazorpayResponse) => {
           try {
-            console.log("Payment response:", response); // Debug log
-
-            const verificationResponse = await fetch("https://maple-server-e7ye.onrender.com/api/payment/verify-payment", {
-              method: "POST",
+            const verificationResponse = await fetch('/api/payment/verify-payment', {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem('token')}`
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 ...response,
@@ -131,47 +136,43 @@ const Checkout = () => {
               }),
             });
 
-            const verificationData: ApiResponse<PaymentResponse> = await verificationResponse.json();
-
-            console.log("Verification request:", {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              bookingId
-            });
-
-            console.log("Verification response:", verificationData);
+            const verificationData: PaymentResponse = await verificationResponse.json();
 
             if (verificationData.success) {
-              toast.success("Payment successful!");
+              toast.success('Payment successful!');
               router.push(`/booking/success?bookingId=${bookingId}&amount=${amount}`);
             } else {
-              throw new Error(verificationData.message || "Payment verification failed");
+              toast.error('Payment verification failed');
             }
           } catch (error) {
-            console.error("Verification error:", error);
-            toast.error("Payment verification failed");
+            if (error instanceof Error) {
+              console.error('Verification error:', error.message);
+            }
+            toast.error('Payment verification failed');
           }
+        },
+        prefill: {
+          name: "Customer Name",
+          email: "customer@example.com",
+          contact: "9999999999"
         },
         modal: {
           ondismiss: function() {
             setLoading(false);
           }
-        },
-        theme: {
-          color: "#f45201"
         }
       };
 
-      const razorpay = new (window as any).Razorpay(options);
+      const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
-      console.error("Payment error:", error);
-      toast.error("Failed to initialize payment");
-    } finally {
+      if (error instanceof Error) {
+        console.error('Payment error:', error.message);
+      }
+      toast.error('Failed to initialize payment');
       setLoading(false);
     }
-  }, [searchParams, router, user]);
+  }, [bookingId, amount, router]);
 
   useEffect(() => {
     const script = document.createElement('script');

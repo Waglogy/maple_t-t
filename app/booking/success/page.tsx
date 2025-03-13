@@ -5,10 +5,15 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, Loader } from 'lucide-react'
 
-export default function SuccessPage() {
+interface SuccessPageProps {
+  // Define your props if needed
+}
+
+export default function SuccessPage({}: SuccessPageProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [bookingDetails, setBookingDetails] = useState<any>(null)
-  const searchParams = useSearchParams()
   const bookingId = searchParams.get('bookingId')
   const amount = searchParams.get('amount')
 
@@ -36,6 +41,14 @@ export default function SuccessPage() {
 
     fetchBookingDetails();
   }, [bookingId]);
+
+  useEffect(() => {
+    if (!bookingId || !amount) {
+      router.push('/');
+    } else {
+      setLoading(false);
+    }
+  }, [router, searchParams]);
 
   if (loading) {
     return (

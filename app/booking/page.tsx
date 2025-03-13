@@ -45,6 +45,10 @@ interface BookingResponse {
   };
 }
 
+interface BookingData {
+  // Define your booking data structure
+}
+
 export default function BookingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +57,7 @@ export default function BookingPage() {
 
   const [packageDetails, setPackageDetails] = useState<PackageDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
   const [formData, setFormData] = useState<BookingFormData>({
     package: packageId || '',
@@ -111,6 +116,22 @@ export default function BookingPage() {
 
     fetchPackageDetails();
   }, [packageId]);
+
+  useEffect(() => {
+    const fetchBookingData = async () => {
+      try {
+        // Your fetch logic here
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+        if (err instanceof Error) {
+          console.error('Fetch error:', err.message);
+        }
+      }
+    };
+
+    fetchBookingData();
+  }, [router]); // Added router as dependency
 
   const calculateTotalAmount = () => {
     if (!packageDetails) return 0;
