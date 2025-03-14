@@ -138,8 +138,8 @@ export default function PackagesPage() {
     </section>
 
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Our Travel Packages</h1>
-      
+     <h1 className="text-3xl font-bold mb-8 bg-zinc-200 p-3 rounded-lg"><marquee>  Our Travel <span className="text-[#f45201]">Packages</span></marquee></h1>
+   
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {packages.map((pkg) => (
           <div key={pkg._id} className="bg-white rounded-lg shadow-lg overflow-hidden">
