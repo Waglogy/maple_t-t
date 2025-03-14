@@ -103,10 +103,10 @@ export default function ContactPage() {
   style={{ backgroundImage: "url('/3.png')" }}
 >
         <div className="absolute inset-0 flex items-center justify-center text-white">
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 px-4">
             <h1 className="text-4xl md:text-6xl font-bold">Contact Us</h1>
-            <p className="text-xl max-w-2xl mx-auto">
-              Let's plan your perfect journey together
+            <p className="text-lg md:text-xl max-w-2xl mx-auto">
+              Your Gateway to Exploring Sikkim's Beauty
             </p>
           </div>
         </div>
@@ -121,38 +121,62 @@ export default function ContactPage() {
               <div>
                 <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
                 <p className="text-gray-600 mb-8">
-                  Whether you're ready to book your next adventure or just have questions, 
-                  our team is here to help you plan the perfect trip.
+                  Whether you're planning your next Sikkim adventure or have questions about our tours, 
+                  our team is here to assist you every step of the way.
                 </p>
               </div>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <MapPin className="w-6 h-6 text-[#f45201]" />
+                  <MapPin className="w-6 h-6 text-[#f45201] flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold mb-1">Visit Us</h3>
                     <p className="text-gray-600">
-                      123 Travel Street<br />
-                      Gangtok, Sikkim 737101<br />
-                      India
+                      Maple Building,<br />
+                      Behind S-Mart Departmental Store,<br />
+                      Near Krishi Bhawan, Tadong,<br />
+                      Gangtok, Sikkim
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-4">
-                  <Mail className="w-6 h-6 text-[#f45201]" />
+                  <Mail className="w-6 h-6 text-[#f45201] flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold mb-1">Email Us</h3>
-                    <p className="text-gray-600">info@mapleleaftours.com</p>
+                    <p className="text-gray-600">
+                      <a 
+                        href="mailto:Travelwithmaple2023@gmail.com" 
+                        className="hover:text-[#f45201] transition-colors"
+                      >
+                        Travelwithmaple2023@gmail.com
+                      </a>
+                    </p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-4">
-                  <Phone className="w-6 h-6 text-[#f45201]" />
+                  <Phone className="w-6 h-6 text-[#f45201] flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold mb-1">Call Us</h3>
-                    <p className="text-gray-600">+91 (123) 456-7890</p>
+                    <p className="text-gray-600">
+                      <a 
+                        href="tel:+917001895132" 
+                        className="hover:text-[#f45201] transition-colors"
+                      >
+                        +91 7001895132
+                      </a>
+                    </p>
                   </div>
+                </div>
+
+                {/* Add social media links if needed */}
+                <div className="pt-4 mt-4 border-t border-gray-200">
+                  <h3 className="font-semibold mb-3">Business Hours</h3>
+                  <p className="text-gray-600">
+                    Monday - Saturday: 9:00 AM - 6:00 PM<br />
+                    Sunday: Closed
+                  </p>
                 </div>
               </div>
             </div>

@@ -102,11 +102,11 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-transparent flex items-center justify-center">
           <div className="text-center text-white space-y-6 px-4 max-w-4xl">
             <div className="space-y-2">
-              <div className="flex justify-center items-center bg-white rounded-full p-2  ">
-              <p className="text-lg md:text-xl text-[#000000] font-medium uppercase tracking-wider">
-                Welcome to the Land of Mystical Wonders
-              </p>
-              </div>
+            <div className="flex justify-center items-center bg-white rounded-full p-1 md:p-2">
+  <p className="text-sm md:text-xl text-[#000000] font-medium uppercase tracking-wider">
+    Welcome to the Land of <span className="text-[#f45201]">Mystical Wonders</span>
+  </p>
+</div>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 {slides[0].title}
               </h1>
@@ -141,7 +141,7 @@ export default function Home() {
       <section className="py-20 ">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="text-zinc-800">About Us & Our Story</span>
+            <span className="text-zinc-800">About Us & <span className="text-[#f45201]">Our Story</span></span>
           </h2>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -226,8 +226,8 @@ export default function Home() {
  {/* Top Rated Packages */}
  <section className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="text-zinc-800 dark:text-white">Latest Packages</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-zinc-100 p-3 rounded-lg">
+            <span className="text-zinc-800 dark:text-white"><span className="text-[#f45201]">Latest</span> Packages</span>
           </h2>
           
           {loading ? (

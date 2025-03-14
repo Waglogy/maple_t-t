@@ -4,6 +4,7 @@ import { useState } from "react"
 import { X } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 interface Photo {
   id: number
@@ -69,44 +70,68 @@ export default function PhotoGallery() {
       case "small":
         return "col-span-1 row-span-1"
       case "medium":
-        return "col-span-1 row-span-2"
+        return "col-span-1 md:col-span-1 row-span-1 md:row-span-2"
       case "large":
-        return "col-span-2 row-span-2"
+        return "col-span-1 md:col-span-2 row-span-1 md:row-span-2"
       default:
         return "col-span-1 row-span-1"
     }
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
+    <div className="container mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[200px] md:auto-rows-[250px]">
         {photos.map((photo) => (
-          <Card key={photo.id} className={`overflow-hidden ${getSizeClass(photo.size)}`}>
-            <button className="w-full h-full" onClick={() => setSelectedPhoto(photo)} aria-label={`View ${photo.alt}`}>
-              <img
-                src={photo.src || "/placeholder.svg"}
-                alt={photo.alt}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              />
+          <Card 
+            key={photo.id} 
+            className={`overflow-hidden transition-transform duration-300 hover:scale-[1.02] ${getSizeClass(photo.size)}`}
+          >
+            <button 
+              className="relative w-full h-full" 
+              onClick={() => setSelectedPhoto(photo)} 
+              aria-label={`View ${photo.alt}`}
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
+                  priority
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder.svg';
+                  }}
+                />
+              </div>
             </button>
           </Card>
         ))}
       </div>
 
-      {/* Lightbox */}
+      {/* Lightbox with Next/Image */}
       {selectedPhoto && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="max-w-4xl w-full p-4">
-            <img
-              src={selectedPhoto.src || "/placeholder.svg"}
-              alt={selectedPhoto.alt}
-              className="w-full h-auto max-h-[80vh] object-contain"
-            />
-            <p className="text-white text-center mt-2">{selectedPhoto.caption}</p>
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+          <div className="relative max-w-4xl w-full h-[80vh] flex flex-col items-center">
+            <div className="relative w-full h-full">
+              <Image
+                src={selectedPhoto.src}
+                alt={selectedPhoto.alt}
+                fill
+                sizes="100vw"
+                className="object-contain"
+                priority
+                quality={100}
+              />
+            </div>
+            <p className="text-white text-center mt-4 text-sm md:text-base">
+              {selectedPhoto.caption}
+            </p>
             <Button
               variant="outline"
               size="icon"
-              className="absolute top-4 right-4 bg-white/10 hover:bg-white/20"
+              className="absolute top-2 right-2 bg-black/50 hover:bg-black/75 text-white"
               onClick={() => setSelectedPhoto(null)}
               aria-label="Close lightbox"
             >

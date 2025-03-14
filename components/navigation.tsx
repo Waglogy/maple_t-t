@@ -234,7 +234,7 @@ export function Navigation() {
               onClick={(e) => handleProtectedRoute(e, '/booking')}
               className="gradient-button"
             >
-              Book Now
+             <span className="text-[#f45201]"> Book Now</span>
             </a>
             <AuthButton />
           </div>
@@ -297,7 +297,7 @@ export function Navigation() {
               }}
               className="gradient-button w-full text-center"
             >
-              Book Now
+            <span className="text-[#f45201]"> Book Now</span>
             </a>
             <div onClick={() => setIsOpen(false)}>
               <AuthButton />
