@@ -102,59 +102,79 @@ const Checkout = () => {
         return;
       }
 
-      const response = await fetch('/api/payment/create-order', {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please login to continue');
+        router.push('/login');
+        return;
+      }
+
+      // Match the backend expected format
+      const orderData = {
+        amount: Number(amount),
+        currency: "INR",
+        receipt: `receipt_${bookingId}`
+      };
+
+      console.log('Creating order with data:', orderData);
+
+      const response = await fetch("https://maple-server-e7ye.onrender.com/api/payment/create-order", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ amount, bookingId }),
+        body: JSON.stringify(orderData)
       });
 
-      const data: PaymentResponse = await response.json();
+      const order = await response.json();
+      console.log('Order response:', order);
 
-      if (!data.success) {
-        throw new Error(data.message);
+      if (!order.id) {
+        throw new Error('Failed to create payment order');
       }
 
       const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
-        amount: data.data?.amount || 0,
-        currency: "INR",
+        amount: order.amount, // Backend already converts to paise
+        currency: order.currency,
         name: "Maple Tours",
         description: "Package Booking Payment",
-        order_id: data.data?.id || '',
+        order_id: order.id,
         handler: async (response: RazorpayResponse) => {
           try {
-            const verificationResponse = await fetch('/api/payment/verify-payment', {
+            const verificationResponse = await fetch("https://maple-server-e7ye.onrender.com/api/payment/verify-payment", {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
               },
               body: JSON.stringify({
-                ...response,
-                bookingId,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                bookingId
               }),
             });
 
-            const verificationData: PaymentResponse = await verificationResponse.json();
+            const verificationData = await verificationResponse.json();
 
             if (verificationData.success) {
+              // Payment verified successfully
               toast.success('Payment successful!');
               router.push(`/booking/success?bookingId=${bookingId}&amount=${amount}`);
             } else {
-              toast.error('Payment verification failed');
+              throw new Error(verificationData.message || 'Payment verification failed');
             }
           } catch (error) {
-            if (error instanceof Error) {
-              console.error('Verification error:', error.message);
-            }
-            toast.error('Payment verification failed');
+            console.error('Verification error:', error);
+            toast.error('Payment verification failed. Please contact support.');
           }
         },
         prefill: {
-          name: "Customer Name",
-          email: "customer@example.com",
-          contact: "9999999999"
+          name: user?.name || "",
+          email: user?.email || "",
+          contact: user?.phone || ""
         },
         modal: {
           ondismiss: function() {
@@ -166,13 +186,11 @@ const Checkout = () => {
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
-      if (error instanceof Error) {
-        console.error('Payment error:', error.message);
-      }
-      toast.error('Failed to initialize payment');
+      console.error('Payment error:', error);
       setLoading(false);
+      toast.error(error instanceof Error ? error.message : 'Payment initialization failed');
     }
-  }, [bookingId, amount, router]);
+  }, [bookingId, amount, router, user]);
 
   useEffect(() => {
     const script = document.createElement('script');
