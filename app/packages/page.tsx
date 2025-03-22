@@ -138,7 +138,7 @@ export default function PackagesPage() {
     </section>
 
     <div className="container mx-auto px-4 py-8">
-     <h1 className="text-3xl font-bold mb-8 bg-zinc-200 p-3 rounded-lg"><marquee>  Our Travel <span className="text-[#f45201]">Packages</span></marquee></h1>
+     <h1 className="text-3xl font-bold mb-8 bg-zinc-200 p-3 rounded-lg"> Our Travel <span className="text-[#f45201]">Packages</span></h1>
    
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {packages.map((pkg) => (
@@ -159,6 +159,7 @@ export default function PackagesPage() {
                         onError={(e: any) => {
                           console.error(`Error loading image: ${image.url}`);
                           e.target.src = '/placeholder.jpg';
+                          e.target.onerror = null; // Prevent infinite loop if placeholder also fails
                         }}
                       />
                       {image.caption && (
@@ -208,12 +209,8 @@ export default function PackagesPage() {
               <div className="border-t pt-4 mt-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <p className="text-sm text-gray-600">Starting from</p>
-                    <p className="text-2xl font-bold text-primary">
-                      {pkg.price.currency} {pkg.price.amount.toLocaleString()}
-                    </p>
+                    <p className="text-sm text-gray-600">Contact For Pricing</p>
                   </div>
-
                   {pkg.pdfBrochure && (
                     <button
                       onClick={() => handleDownloadBrochure(pkg.pdfBrochure!.url, pkg.pdfBrochure!.filename)}
@@ -224,7 +221,6 @@ export default function PackagesPage() {
                     </button>
                   )}
                 </div>
-
                 <button
                   onClick={() => handleBookNow(pkg)}
                   className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors"

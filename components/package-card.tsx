@@ -101,8 +101,8 @@ export function PackageCard({
 
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-sm text-gray-500">Starting from</p>
-            <p className="text-2xl font-bold text-[#f45201]">
+            <p className="text-sm text-gray-500">Contact For Pricing</p>
+            <p className="text-2xl font-bold text-white">
               ₹{price.toLocaleString()}
             </p>
           </div>

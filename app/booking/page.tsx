@@ -179,7 +179,7 @@ export default function BookingPage() {
         setShowConfirmation(true);
         toast.success('Booking created successfully!');
       } else {
-        throw new Error(data.message);
+throw new Error('Failed to create booking');
       }
     } catch (error) {
       toast.error('Failed to create booking');
@@ -271,7 +271,7 @@ export default function BookingPage() {
                 <p className="font-medium">{packageDetails.duration.days} Days, {packageDetails.duration.nights} Nights</p>
               </div>
               <div>
-                <p className="text-gray-600">Price per person</p>
+                <p className="text-gray-600">Price </p>
                 <p className="font-medium">{packageDetails.price.currency} {packageDetails.price.amount.toLocaleString()}</p>
               </div>
             </div>
