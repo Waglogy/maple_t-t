@@ -150,7 +150,7 @@ export default function SikkimInteractiveMap({
 
   const sikkimIntroContent = `Situated in the eastern Himalayas, Sikkim is bounded in the north by the vast stretches of the Tibetan Plateau and to its west lies the kingdom of Nepal. In the east it is bounded by Bhutan and the Chumbi Valley of Tibet, and India stretches along its southern boundary. With an area of 2,818 square miles and measuring approximately 70 miles from north to south, Sikkim is a land of varied elevations ranging from 800 to over 28,000 feet above sea-level.
 
-The population consists of approximately 1,72,000 inhabitants, of which over 90 percent live in the rural areas. The three main communities in Sikkim are the Lepchas, the Bhutias and the Nepalis. The Lepchas-who call themselves "Rong Pa" (Ravine Folk), are believed to have been the original inhabitants of Sikkim.
+The population consists of approximately 1,72,000 inhabitants, of which over 6.77 lakh people living in the rural areas. The three main communities in Sikkim are the Lepchas, the Bhutias and the Nepalis. The Lepchas-who call themselves "Rong Pa" (Ravine Folk), are believed to have been the original inhabitants of Sikkim.
 
 Mahayana Buddhism is the State Religion of Sikkim, with 67 monasteries including the historically significant ones at Pemayangtse, Tashiding, Phensang, Phodang, Rumtek and Ralang. The principal languages are Bhutia, Nepali and Lepcha, with English used extensively for official communications.
 
