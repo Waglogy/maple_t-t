@@ -150,7 +150,6 @@ export default function TestimonialsPage() {
       {/* Testimonials Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">What Our Clients Say</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((testimonial) => (
               <div key={testimonial._id} className="bg-white p-6 rounded-lg shadow-lg">
