@@ -191,7 +191,7 @@ export default function ContactPage() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      placeholder="John" 
+                      placeholder="" 
                       required
                       disabled={loading}
                     />
@@ -202,7 +202,7 @@ export default function ContactPage() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      placeholder="Doe" 
+                      placeholder="" 
                       required
                       disabled={loading}
                     />
@@ -216,7 +216,7 @@ export default function ContactPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="john@example.com" 
+                    placeholder="" 
                     required
                     disabled={loading}
                   />
@@ -228,7 +228,7 @@ export default function ContactPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="10-digit mobile number" 
+                    placeholder="" 
                     required
                     disabled={loading}
                   />
@@ -240,7 +240,7 @@ export default function ContactPage() {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="Tell us about your travel plans..."
+                    placeholder=""
                     className="min-h-[150px]"
                     required
                     disabled={loading}

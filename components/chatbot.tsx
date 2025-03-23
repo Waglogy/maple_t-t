@@ -21,34 +21,37 @@ export function Chatbot() {
       {/* Chatbot Toggle Button */}
       <Button
         size="icon"
-        className="h-12 w-12 rounded-full gradient-btn"
+        className="h-14 w-14 rounded-full bg-[#f45201] hover:from-[#f45201] hover:to-[#010001] transition-all duration-300 shadow-lg"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <MessageCircle />
+        <MessageCircle className="h-6 w-6 text-white" />
       </Button>
 
       {/* Chatbot Popup */}
       <Card
         className={cn(
-          "absolute bottom-16 right-0 w-80 h-[500px] transition-all duration-300",
+          "absolute bottom-20 right-0 w-96 h-[550px] transition-all duration-300 border border-[#f45201]/20 shadow-xl",
           isOpen
             ? "translate-y-0 opacity-100"
             : "translate-y-4 opacity-0 pointer-events-none"
         )}
       >
-        <CardHeader className="flex justify-between items-center">
-          <CardTitle>Chat with us</CardTitle>
+        <CardHeader className="flex justify-between items-center bg-[#f45201] p-4">
+          <CardTitle className="text-white text-lg">Chat with us</CardTitle>
           {/* Close Button */}
-          <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-white hover:text-gray-200 transition-colors"
+          >
             <X size={20} />
           </button>
         </CardHeader>
-        <CardContent className="h-full">
+        <CardContent className="h-full p-0">
           {/* Embed BotPress Webchat */}
           <iframe
             src={botpressUrl}
             title="BotPress Chatbot"
-            className="w-full h-[420px] border-none"
+            className="w-full h-[500px] border-none"
             allow="microphone; autoplay"
           ></iframe>
         </CardContent>
