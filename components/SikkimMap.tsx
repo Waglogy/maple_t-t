@@ -227,7 +227,7 @@ For tourists, the recommended seasons are between mid-February and late May, dur
           ) : (
             <Card>
               <CardHeader>
-                <CardTitle>Welcome to Sikkim</CardTitle>
+                <CardTitle> Sikkim</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">

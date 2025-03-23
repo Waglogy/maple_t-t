@@ -98,7 +98,7 @@ export function Navigation() {
         setShowProfileDialog(false);
       } else if (response.status === 401) {
         localStorage.removeItem('token');
-        setIsAuthenticated(false);
+logout();
         toast.error('Session expired. Please login again.');
       } else {
         const error = await response.json();
@@ -191,11 +191,11 @@ export function Navigation() {
           <Link href="/" className="flex items-center gap-2 min-w-max">
             <div className="relative w-[90px] h-[90px] flex-shrink-0">
               <Image
-                src="/logo2.png"
+                src="/MAPLE LEAF logo design.png"
                 alt="Maple Leaf Tours Logo"
                 width={90}
                 height={90}
-                className="object-contain mt-2"
+                className="object-contain "
                 priority
               />
             </div>
@@ -203,11 +203,11 @@ export function Navigation() {
               <span className="font-bold text-xl text-white whitespace-nowrap tracking-wide">
                 Maple Leaf Tours
               </span>
-              <span 
+              <span
                 className="text-sm italic font-light text-[#ffffff]/90"
-                style={{ 
+                style={{
                   fontFamily: "Palatino, serif",
-                  textShadow: "0px 1px 2px rgba(0,0,0,0.1)"
+                  textShadow: "0px 1px 2px rgba(0,0,0,0.1)",
                 }}
               >
                 Simple. Elegant. Classy
@@ -217,31 +217,60 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
+            <Link
+              href="/"
+              className="text-[#ffffff] hover:text-[#f45201] transition-colors"
+            >
               Home
             </Link>
-            <Link href="/packages" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
+            <Link
+              href="/about"
+              className="text-[#ffffff] hover:text-[#f45201] transition-colors"
+            >
+              About us
+            </Link>
+            <Link
+              href="/packages"
+              className="text-[#ffffff] hover:text-[#f45201] transition-colors"
+            >
               Packages
             </Link>
-            <Link href="/contact" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
+
+            <Link
+              href="/contact"
+              className="text-[#ffffff] hover:text-[#f45201] transition-colors"
+            >
               Contact
             </Link>
-            <Link href="/testimonials" className="text-[#ffffff] hover:text-[#f45201] transition-colors">
+            <Link
+              href="/testimonials"
+              className="text-[#ffffff] hover:text-[#f45201] transition-colors"
+            >
               Testimonials
             </Link>
             <a
               href="/booking"
-              onClick={(e) => handleProtectedRoute(e, '/booking')}
+              onClick={(e) => handleProtectedRoute(e, "/booking")}
               className="gradient-button"
             >
-             <span className="text-[#f45201]"> Book Now</span>
+              <span className="text-[#f45201]"> Book Now</span>
             </a>
             <AuthButton />
           </div>
 
           {/* Mobile Navigation */}
-          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <button
+            className="md:hidden"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M4 6H20M4 12H20M4 18H20"
                 stroke="white"
@@ -257,7 +286,7 @@ export function Navigation() {
         <div
           className={cn(
             "fixed inset-0 mt-6 top-16 bg-black/75 backdrop-blur-md z-50 md:hidden transition-transform duration-300 h-80",
-            isOpen ? "translate-x-0" : "translate-x-full",
+            isOpen ? "translate-x-0" : "translate-x-full"
           )}
         >
           <div className="flex flex-col p-4 space-y-4">
@@ -267,6 +296,13 @@ export function Navigation() {
               onClick={() => setIsOpen(false)}
             >
               Home
+            </Link>
+            <Link
+              href="/about"
+              className="text-lg font-medium text-[#ffffff] hover:text-[#f45201]"
+              onClick={() => setIsOpen(false)}
+            >
+              About Us
             </Link>
             <Link
               href="/packages"
@@ -292,12 +328,12 @@ export function Navigation() {
             <a
               href="/booking"
               onClick={(e) => {
-                setIsOpen(false)
-                handleProtectedRoute(e, '/booking')
+                setIsOpen(false);
+                handleProtectedRoute(e, "/booking");
               }}
               className="gradient-button w-full text-center"
             >
-            <span className="text-[#f45201]"> Book Now</span>
+              <span className="text-[#f45201]"> Book Now</span>
             </a>
             <div onClick={() => setIsOpen(false)}>
               <AuthButton />
@@ -307,7 +343,7 @@ export function Navigation() {
       </header>
 
       {/* Auth Modal */}
-      <AuthModal 
+      <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onLoginSuccess={() => setShowAuthModal(false)}
@@ -321,34 +357,48 @@ export function Navigation() {
           </DialogHeader>
           <form onSubmit={handleProfileUpdate} className="space-y-4">
             <div>
-              <label htmlFor="firstName" className="text-sm font-medium">First Name</label>
+              <label htmlFor="firstName" className="text-sm font-medium">
+                First Name
+              </label>
               <Input
                 id="firstName"
                 value={userProfile.firstName}
-                onChange={(e) => setUserProfile({...userProfile, firstName: e.target.value})}
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, firstName: e.target.value })
+                }
                 className="mt-1"
               />
             </div>
             <div>
-              <label htmlFor="lastName" className="text-sm font-medium">Last Name</label>
+              <label htmlFor="lastName" className="text-sm font-medium">
+                Last Name
+              </label>
               <Input
                 id="lastName"
                 value={userProfile.lastName}
-                onChange={(e) => setUserProfile({...userProfile, lastName: e.target.value})}
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, lastName: e.target.value })
+                }
                 className="mt-1"
               />
             </div>
             <div>
-              <label htmlFor="email" className="text-sm font-medium">Email</label>
+              <label htmlFor="email" className="text-sm font-medium">
+                Email
+              </label>
               <Input
                 id="email"
                 type="email"
                 value={userProfile.email}
-                onChange={(e) => setUserProfile({...userProfile, email: e.target.value})}
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, email: e.target.value })
+                }
                 className="mt-1"
               />
             </div>
-            <Button type="submit" className="w-full">Update Profile</Button>
+            <Button type="submit" className="w-full">
+              Update Profile
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -361,40 +411,63 @@ export function Navigation() {
           </DialogHeader>
           <form onSubmit={handlePasswordUpdate} className="space-y-4">
             <div>
-              <label htmlFor="currentPassword" className="text-sm font-medium">Current Password</label>
+              <label htmlFor="currentPassword" className="text-sm font-medium">
+                Current Password
+              </label>
               <Input
                 id="currentPassword"
                 type="password"
                 value={passwordUpdate.currentPassword}
-                onChange={(e) => setPasswordUpdate({...passwordUpdate, currentPassword: e.target.value})}
+                onChange={(e) =>
+                  setPasswordUpdate({
+                    ...passwordUpdate,
+                    currentPassword: e.target.value,
+                  })
+                }
                 className="mt-1"
               />
             </div>
             <div>
-              <label htmlFor="newPassword" className="text-sm font-medium">New Password</label>
+              <label htmlFor="newPassword" className="text-sm font-medium">
+                New Password
+              </label>
               <Input
                 id="newPassword"
                 type="password"
                 value={passwordUpdate.newPassword}
-                onChange={(e) => setPasswordUpdate({...passwordUpdate, newPassword: e.target.value})}
+                onChange={(e) =>
+                  setPasswordUpdate({
+                    ...passwordUpdate,
+                    newPassword: e.target.value,
+                  })
+                }
                 className="mt-1"
               />
             </div>
             <div>
-              <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm New Password</label>
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm New Password
+              </label>
               <Input
                 id="confirmPassword"
                 type="password"
                 value={passwordUpdate.confirmPassword}
-                onChange={(e) => setPasswordUpdate({...passwordUpdate, confirmPassword: e.target.value})}
+                onChange={(e) =>
+                  setPasswordUpdate({
+                    ...passwordUpdate,
+                    confirmPassword: e.target.value,
+                  })
+                }
                 className="mt-1"
               />
             </div>
-            <Button type="submit" className="w-full">Update Password</Button>
+            <Button type="submit" className="w-full">
+              Update Password
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
 

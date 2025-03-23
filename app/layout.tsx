@@ -30,7 +30,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} style={{ backgroundColor: '#f9f7da' }}>
         <AuthProvider>
           <Navigation />
           <main>{children}</main>

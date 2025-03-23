@@ -1,18 +1,18 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Facebook, Instagram, Twitter, Heart } from 'lucide-react'
+import Link from "next/link";
+import Image from "next/image";
+import { Facebook, Instagram, Twitter, Heart } from "lucide-react";
 
 export function Footer() {
   return (
     <footer className="relative bg-[#010001] text-white">
       {/* Background Image */}
-      <div 
+      <div
         className="absolute inset-0 z-0"
         style={{
           backgroundImage: 'url("/1.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: '0.15'
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: "0.15",
         }}
       />
 
@@ -31,7 +31,9 @@ export function Footer() {
                 />
                 <div className="flex flex-col">
                   <h3 className="text-xl font-bold">Maple Leaf Tours</h3>
-                  <p className="text-gray-400 text-sm italic font-light text-[#010001]/75">Simple. Elegant. Classy</p>
+                  <p className="text-gray-400 text-sm italic font-light text-[#010001]/75">
+                    Simple. Elegant. Classy
+                  </p>
                 </div>
               </div>
             </div>
@@ -45,12 +47,18 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/packages" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/packages"
+                  className="text-gray-400 hover:text-white"
+                >
                   Packages
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/contact"
+                  className="text-gray-400 hover:text-white"
+                >
                   Contact
                 </Link>
               </li>
@@ -62,7 +70,7 @@ export function Footer() {
               <li>Maple Building,</li>
               <li>Behind S-Mart Departmental Store,</li>
               <li>Near Krishi Bhawan, Tadong</li>
-              <li>Phone: (555) 123-4567</li>
+              <li>Phone: +91 7001895132</li>
               <li>Email: Travelwithmaple2023@gmail.com</li>
             </ul>
           </div>
@@ -82,14 +90,17 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Maple Leaf Tours. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Maple Leaf Tours. All rights
+            reserved.
+          </p>
           <div className="mt-2 flex items-center justify-center gap-1">
             <span>Made with</span>
             <Heart className="h-4 w-4 text-red-500 fill-red-500" />
             <span>by</span>
-            <Link 
-              href="https://www.waglogy.in" 
-              target="_blank" 
+            <Link
+              href="https://www.waglogy.in"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-blue-400 hover:text-blue-300"
             >
@@ -99,6 +110,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
-

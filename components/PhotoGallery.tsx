@@ -17,100 +17,131 @@ interface Photo {
 const photos: Photo[] = [
   {
     id: 1,
-    src: "/11.png?height=300&width=300",
-    alt: "Small photo 1",
-    caption: "Beautiful landscape",
-    size: "small",
+    src: "/11.png",
+    alt: "Gangtok City View",
+    caption: "Panoramic view of Gangtok city with lush green mountains",
+    size: "medium",
   },
   {
     id: 2,
-    src: "/22.png?height=600&width=400",
-    alt: "Medium photo 1",
-    caption: "City skyline",
-    size: "medium",
+    src: "/22.png",
+    alt: "Tsomgo Lake",
+    caption: "Serene Tsomgo Lake surrounded by snow-capped mountains",
+    size: "large",
   },
   {
     id: 3,
-    src: "/33.png?height=400&width=600",
-    alt: "Large photo 1",
-    caption: "Mountain view",
-    size: "large",
-  },
-  { id: 4, src: "/4.png?height=300&width=300", alt: "Small photo 2", caption: "Serene beach", size: "small" },
-  {
-    id: 5,
-    src: "/9.png?height=600&width=400",
-    alt: "Medium photo 2",
-    caption: "Forest trail",
+    src: "/33.png",
+    alt: "Nathula Pass",
+    caption: "Historic Nathula Pass on the India-China border",
     size: "medium",
   },
   {
-    id: 6,
-    src: "/5.png?height=300&width=300",
-    alt: "Small photo 3",
-    caption: "Desert sunset",
+    id: 4,
+    src: "/4.png",
+    alt: "Rumtek Monastery",
+    caption: "Majestic Rumtek Monastery, a center of Tibetan Buddhism",
     size: "small",
   },
-  { id: 7, src: "/6.png?height=400&width=600", alt: "Large photo 2", caption: "Ocean waves", size: "large" },
+  {
+    id: 5,
+    src: "/9.png",
+    alt: "Yumthang Valley",
+    caption: "Colorful Yumthang Valley known as the Valley of Flowers",
+    size: "large",
+  },
+  {
+    id: 6,
+    src: "/5.png",
+    alt: "Pelling Skywalk",
+    caption: "Thrilling Pelling Skywalk with panoramic mountain views",
+    size: "small",
+  },
+  {
+    id: 7,
+    src: "/6.png",
+    alt: "Lachung Village",
+    caption: "Picturesque Lachung Village in North Sikkim",
+    size: "medium",
+  },
   {
     id: 8,
-    src: "/7.png?height=300&width=300",
-    alt: "Small photo 4",
-    caption: "Autumn leaves",
+    src: "/7.png",
+    alt: "Khecheopalri Lake",
+    caption: "Sacred Khecheopalri Lake surrounded by prayer flags",
     size: "small",
   },
-  
-]
+  {
+    id: 9,
+    src: "/7.png",
+    alt: "Khecheopalri Lake",
+    caption: "Sacred Khecheopalri Lake surrounded by prayer flags",
+    size: "small",
+  },
+  {
+    id: 10,
+    src: "/7.png",
+    alt: "Khecheopalri Lake",
+    caption: "Sacred Khecheopalri Lake surrounded by prayer flags",
+    size: "small",
+  },
+];
 
+// Update the grid layout
 export default function PhotoGallery() {
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null)
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const getSizeClass = (size: Photo["size"]) => {
     switch (size) {
       case "small":
-        return "col-span-1 row-span-1"
+        return "col-span-1 row-span-1";
       case "medium":
-        return "col-span-1 md:col-span-1 row-span-1 md:row-span-2"
+        return "col-span-1 md:col-span-1 row-span-1";
       case "large":
-        return "col-span-1 md:col-span-2 row-span-1 md:row-span-2"
+        return "col-span-1 md:col-span-2 row-span-1";
       default:
-        return "col-span-1 row-span-1"
+        return "col-span-1 row-span-1";
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[200px] md:auto-rows-[250px]">
+      <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+        Explore Sikkim <span className="text-[#f45201]">Through Our Lens</span>
+      </h2>
+      <p className="text-center text-gray-600 max-w-2xl mx-auto mb-8">
+        Discover the breathtaking beauty of Sikkim through our curated
+        collection of photographs. From majestic mountains to serene lakes, each
+        image captures the essence of this Himalayan paradise.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 auto-rows-[200px]">
         {photos.map((photo) => (
-          <Card 
-            key={photo.id} 
-            className={`overflow-hidden transition-transform duration-300 hover:scale-[1.02] ${getSizeClass(photo.size)}`}
+          <Card
+            key={photo.id}
+            className={`relative overflow-hidden group transition-all duration-300 hover:scale-[1.03] ${getSizeClass(
+              photo.size
+            )}`}
           >
-            <button 
-              className="relative w-full h-full" 
-              onClick={() => setSelectedPhoto(photo)} 
+            <button
+              className="relative w-full h-full"
+              onClick={() => setSelectedPhoto(photo)}
               aria-label={`View ${photo.alt}`}
             >
-              <div className="relative w-full h-full">
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover"
-                  priority
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/placeholder.svg';
-                  }}
-                />
-              </div>
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </button>
           </Card>
         ))}
       </div>
 
-      {/* Lightbox with Next/Image */}
+      {/* Lightbox remains the same */}
       {selectedPhoto && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
           <div className="relative max-w-4xl w-full h-[80vh] flex flex-col items-center">
@@ -125,9 +156,6 @@ export default function PhotoGallery() {
                 quality={100}
               />
             </div>
-            <p className="text-white text-center mt-4 text-sm md:text-base">
-              {selectedPhoto.caption}
-            </p>
             <Button
               variant="outline"
               size="icon"
@@ -141,6 +169,6 @@ export default function PhotoGallery() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
