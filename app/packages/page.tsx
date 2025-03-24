@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
+// Update the Package interface
 interface Package {
   _id: string
   title: string
@@ -35,6 +36,14 @@ interface Package {
     caption: string
   }>
   inclusions: string[]
+  exclusions: string[]
+  itinerary: Array<{
+    day: number
+    title: string
+    description: string
+    _id: string
+  }>
+  cancellationPolicy: string
   pdfBrochure?: {
     url: string
     filename: string
@@ -206,11 +215,13 @@ export default function PackagesPage() {
               <div className="p-4">
                 <h3 className="text-xl font-semibold mb-2">{pkg.title}</h3>
 
+                {/* Destination */}
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
                   <FaMapMarkerAlt />
                   <span>{pkg.destination}</span>
                 </div>
 
+                {/* Duration */}
                 <div className="flex items-center gap-4 mb-3">
                   <div className="flex items-center gap-1">
                     <FaClock className="text-gray-600" />
@@ -220,39 +231,87 @@ export default function PackagesPage() {
                   </div>
                 </div>
 
+                {/* Price */}
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600">
+                    Starting from {pkg.price.currency} {pkg.price.amount}
+                  </p>
+                </div>
+
+                {/* Description */}
+                {pkg.description && (
+                  <div className="text-sm text-gray-600 mb-4 whitespace-pre-line">
+                    {pkg.description}
+                  </div>
+                )}
+
                 {/* Inclusions */}
-                <ul className="text-sm text-gray-600 mb-4">
-                  {pkg.inclusions.slice(0, 3).map((inclusion, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <span className="w-1 h-1 bg-primary rounded-full"></span>
-                      {inclusion}
-                    </li>
-                  ))}
-                </ul>
+                {pkg.inclusions && pkg.inclusions.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2">Inclusions</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {pkg.inclusions[0].split('✅').filter(Boolean).map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="text-green-600">✅</span>
+                          {item.trim()}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Exclusions */}
+                {pkg.exclusions && pkg.exclusions.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2">Exclusions</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {pkg.exclusions[0].split('❌').filter(Boolean).map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="text-red-600">❌</span>
+                          {item.trim()}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Itinerary */}
+                {pkg.itinerary && pkg.itinerary.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2">Itinerary</h4>
+                    <div className="text-sm text-gray-600">
+                      <p>Day 1: {pkg.itinerary[0].title}</p>
+                      <p>Day {pkg.itinerary.length}: {pkg.itinerary[pkg.itinerary.length - 1].title}</p>
+                      <p className="mt-2">+ {pkg.itinerary.length - 2} more days</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Cancellation Policy - Removed */}
+                {pkg.cancellationPolicy && (
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2">Cancellation Policy</h4>
+                    <p className="text-sm text-gray-600 whitespace-pre-line">
+                      {pkg.cancellationPolicy}
+                    </p>
+                  </div>
+                )}
 
                 {/* Price and Actions */}
                 <div className="border-t pt-4 mt-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <p className="text-sm text-gray-600">
-                        Contact For Pricing
-                      </p>
-                    </div>
-                    {pkg.pdfBrochure && (
-                      <button
-                        onClick={() =>
-                          handleDownloadBrochure(
-                            pkg.pdfBrochure!.url,
-                            pkg.pdfBrochure!.filename
-                          )
-                        }
-                        className="text-primary hover:text-primary-dark"
-                        title="Download Brochure"
-                      >
-                        <FaDownload size={20} />
-                      </button>
-                    )}
-                  </div>
+                  {pkg.pdfBrochure && (
+                    <button
+                      onClick={() =>
+                        handleDownloadBrochure(
+                          pkg.pdfBrochure!.url,
+                          pkg.pdfBrochure!.filename
+                        )
+                      }
+                      className="w-full mb-4 bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors"
+                    >
+                      Download Brochure
+                    </button>
+                  )}
                   <button
                     onClick={() => handleBookNow(pkg)}
                     className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors"
