@@ -24,7 +24,7 @@ const photos: Photo[] = [
   },
   {
     id: 2,
-    src: "/22.png",
+    src: "/gallery1.png",
     alt: "Tsomgo Lake",
     caption: "Serene Tsomgo Lake surrounded by snow-capped mountains",
     size: "large",
@@ -45,7 +45,7 @@ const photos: Photo[] = [
   },
   {
     id: 5,
-    src: "/9.png",
+    src: "/gallery2.png",
     alt: "Yumthang Valley",
     caption: "Colorful Yumthang Valley known as the Valley of Flowers",
     size: "large",
@@ -73,14 +73,14 @@ const photos: Photo[] = [
   },
   {
     id: 9,
-    src: "/7.png",
+    src: "/gallery4.png",
     alt: "Khecheopalri Lake",
     caption: "Sacred Khecheopalri Lake surrounded by prayer flags",
     size: "small",
   },
   {
     id: 10,
-    src: "/7.png",
+    src: "/gallery5.png",
     alt: "Khecheopalri Lake",
     caption: "Sacred Khecheopalri Lake surrounded by prayer flags",
     size: "small",
