@@ -194,9 +194,15 @@ export default function Home() {
                     src="/MAPLE LEAF logo design.png"
                     alt="Scenic mountain drive"
                     fill
-                    className="object-cover hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-contain hover:scale-105 transition-transform duration-500 w-full h-full"
+                    sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    quality={100}
                     priority
+                    style={{
+                      objectFit: 'contain',
+                      width: '100%',
+                      height: '100%'
+                    }}
                   />
                 </div>
                 <div className="relative h-[200px] rounded-sm shadow-lg overflow-hidden  hover:shadow-xl transition-all duration-300">
