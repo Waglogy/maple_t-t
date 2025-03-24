@@ -299,19 +299,19 @@ export default function PackagesPage() {
 
                 {/* Price and Actions */}
                 <div className="border-t pt-4 mt-4">
-                  {pkg.pdfBrochure && (
-                    <button
-                      onClick={() =>
-                        handleDownloadBrochure(
-                          pkg.pdfBrochure!.url,
-                          pkg.pdfBrochure!.filename
-                        )
-                      }
-                      className="w-full mb-4 bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors"
-                    >
-                      Download Brochure
-                    </button>
-                  )}
+                  {/* {pkg.pdfBrochure && (
+                    // <button
+                    //   onClick={() =>
+                    //     handleDownloadBrochure(
+                    //       pkg.pdfBrochure!.url,
+                    //       pkg.pdfBrochure!.filename
+                    //     )
+                    //   }
+                    //   className="w-full mb-4 bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors"
+                    // >
+                    //   Download Brochure
+                    // </button>
+                  )} */}
                   <button
                     onClick={() => handleBookNow(pkg)}
                     className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors"
