@@ -64,7 +64,9 @@ Budget: ${formData.budget}
 Selected Places: ${selectedPlaces.join(", ")}
 Special Requests: ${formData.specialRequests}`;
 
-    const whatsappUrl = `https://wa.me/919733814168?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/917001895132?text=${encodeURIComponent(
+      message
+    )}`;
     window.open(whatsappUrl, "_blank");
   };
 
