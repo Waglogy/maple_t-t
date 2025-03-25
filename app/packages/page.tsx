@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import CustomPackage from "@/components/CustomPackage";
 
 // Update the Package interface
 interface Package {
@@ -212,7 +213,7 @@ export default function PackagesPage() {
               </div>
 
               {/* Package Details */}
-              <div className="p-4">
+              <div className="p-4 mt-4">
                 <h3 className="text-xl font-semibold mb-2">{pkg.title}</h3>
 
                 {/* Destination */}
@@ -276,16 +277,7 @@ export default function PackagesPage() {
                 )}
 
                 {/* Itinerary */}
-                {pkg.itinerary && pkg.itinerary.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2">Itinerary</h4>
-                    <div className="text-sm text-gray-600">
-                      <p>Day 1: {pkg.itinerary[0].title}</p>
-                      <p>Day {pkg.itinerary.length}: {pkg.itinerary[pkg.itinerary.length - 1].title}</p>
-                      <p className="mt-2">+ {pkg.itinerary.length - 2} more days</p>
-                    </div>
-                  </div>
-                )}
+               
 
                 {/* Cancellation Policy - Removed */}
                 {pkg.cancellationPolicy && (
@@ -322,6 +314,11 @@ export default function PackagesPage() {
               </div>
             </div>
           ))}
+          
+          {/* Add Custom Package Card */}
+          <div className=" rounded-lg  overflow-hidden w-full max-w-[400px]">
+            <CustomPackage />
+          </div>
         </div>
       </div>
       
@@ -344,6 +341,9 @@ export default function PackagesPage() {
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* Add Custom Package Section */}
+     
     </>
   );
 }
