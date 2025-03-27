@@ -147,17 +147,15 @@ export default function SikkimInteractiveMap({
     setSelectedLocation(location)
     setSelectedDistrict(district)
   }
+  const sikkimIntroContent = `Situated in the eastern Himalayas, Sikkim is bounded in the north by the vast stretches of the Tibetan Plateau and to its west lies Nepal. In the east it is bounded by Bhutan and the Chumbi Valley of Tibet, and India stretches along its southern boundary. With an area of 2,818 square miles and measuring approximately 70 miles from north to south, Sikkim is a land of varied elevations ranging from 800 to over 28,000 feet above sea-level.
 
-  const sikkimIntroContent = `Situated in the eastern Himalayas, Sikkim is bounded in the north by the vast stretches of the Tibetan Plateau and to its west lies the kingdom of Nepal. In the east it is bounded by Bhutan and the Chumbi Valley of Tibet, and India stretches along its southern boundary. With an area of 2,818 square miles and measuring approximately 70 miles from north to south, Sikkim is a land of varied elevations ranging from 800 to over 28,000 feet above sea-level.
+The population consists of approximately 6.77 lakh inhabitants. The three main communities in Sikkim are the Lepchas, the Bhutias and the Nepalis. The Lepchas-who call themselves "Rong Pa" (Ravine Folk), are believed to have been the original inhabitants of Sikkim.
 
-The population consists of approximately 1,72,000 inhabitants, of which over 6.77 lakh people living in the rural areas. The three main communities in Sikkim are the Lepchas, the Bhutias and the Nepalis. The Lepchas-who call themselves "Rong Pa" (Ravine Folk), are believed to have been the original inhabitants of Sikkim.
+Hinduism is the predominant religion in Sikkim, followed by Buddhism. The state has numerous temples and 67 monasteries, including historically significant ones at Pemayangtse, Tashiding, Phensang, Phodang, Rumtek and Ralang. The principal languages are Bhutia, Nepali and Lepcha, with English used extensively for official communications.
 
-Mahayana Buddhism is the State Religion of Sikkim, with 67 monasteries including the historically significant ones at Pemayangtse, Tashiding, Phensang, Phodang, Rumtek and Ralang. The principal languages are Bhutia, Nepali and Lepcha, with English used extensively for official communications.
-
-As a hereditary monarchy, Sikkim's development focuses on agriculture, producing cardamom, oranges, potatoes and apples as principal exports. The country also has significant forest resources, hydel power projects, and minerals including copper, coal, graphite, gypsum and iron.
+As India's 22nd state, Sikkim's economy is primarily based on agriculture, producing cardamom, oranges, potatoes and apples as principal exports. The state also has significant forest resources, hydel power projects, and minerals including copper, coal, graphite, gypsum and iron.
 
 For tourists, the recommended seasons are between mid-February and late May, during the Khang-chen-dzod-nga worship celebrations in early autumn, and from October to December. The scenic magnificence makes almost anywhere in Sikkim perfect for picnics and outdoor activities.`
-
   return (
     <div className={`container mx-auto p-4 space-y-6 ${className}`}>
       <div className="grid md:grid-cols-2 gap-6">
