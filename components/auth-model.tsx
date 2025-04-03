@@ -47,7 +47,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        "https://maple-server-e7ye.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -84,12 +84,15 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
     setIsLoading(true)
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(signupData),
-        credentials: "include", // Important for cookies
-      });
+      const response = await fetch(
+        "https://maple-server-e7ye.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(signupData),
+          credentials: "include", // Important for cookies
+        }
+      );
 
       const data = await response.json()
 
