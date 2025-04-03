@@ -39,21 +39,24 @@ export function Navigation() {
   const { isAuthenticated, user, logout } = useAuth()
   const [isOpen, setIsOpen] = React.useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [showProfileDialog, setShowProfileDialog] = useState(false)
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
-  const [userProfile, setUserProfile] = useState<UserProfile>({
-    firstName: '',
-    lastName: '',
-    email: ''
-  })
-  const [passwordUpdate, setPasswordUpdate] = useState<PasswordUpdate>({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  })
+  // Remove these state declarations
+  // const [userProfile, setUserProfile] = useState<UserProfile>({
+  //   firstName: '',
+  //   lastName: '',
+  //   email: ''
+  // })
+  // const [passwordUpdate, setPasswordUpdate] = useState<PasswordUpdate>({
+  //   currentPassword: '',
+  //   newPassword: '',
+  //   confirmPassword: ''
+  // })
+
+  // Remove these functions
+  // const handleProfileUpdate = async (e: React.FormEvent) => { ... }
+  // const handlePasswordUpdate = async (e: React.FormEvent) => { ... }
 
   // Handle protected route access
   const handleProtectedRoute = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
@@ -71,79 +74,6 @@ export function Navigation() {
     toast.success('Logged out successfully')
   }
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        toast.error('Please login again');
-        return;
-      }
-
-      const response = await fetch('https://maple-server-e7ye.onrender.com/api/user/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include',
-        body: JSON.stringify(userProfile)
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUserProfile(data.data);
-        toast.success('Profile updated successfully');
-        setShowProfileDialog(false);
-      } else if (response.status === 401) {
-        localStorage.removeItem('token');
-logout();
-        toast.error('Session expired. Please login again.');
-      } else {
-        const error = await response.json();
-        toast.error(error.message || 'Failed to update profile');
-      }
-    } catch (error) {
-      console.error('Profile update error:', error);
-      toast.error('Error updating profile');
-    }
-  };
-
-  const handlePasswordUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (passwordUpdate.newPassword !== passwordUpdate.confirmPassword) {
-      toast.error('Passwords do not match')
-      return
-    }
-
-    try {
-      const response = await fetch('https://maple-server-e7ye.onrender.com/api/user/password', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          currentPassword: passwordUpdate.currentPassword,
-          newPassword: passwordUpdate.newPassword
-        })
-      })
-
-      if (response.ok) {
-        toast.success('Password updated successfully')
-        setShowPasswordDialog(false)
-        setPasswordUpdate({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        })
-      } else {
-        toast.error('Failed to update password')
-      }
-    } catch (error) {
-      toast.error('Error updating password')
-    }
-  }
-
   const AuthButton = () => {
     if (isAuthenticated) {
       return (
@@ -155,13 +85,9 @@ logout();
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={() => setShowProfileDialog(true)}>
+            <DropdownMenuItem onClick={() => router.push('/profile')}>
               <User className="mr-2 h-4 w-4" />
-              <span>Update Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setShowPasswordDialog(true)}>
-              <Key className="mr-2 h-4 w-4" />
-              <span>Change Password</span>
+              <span>Profile</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
@@ -349,125 +275,8 @@ logout();
         onLoginSuccess={() => setShowAuthModal(false)}
       />
 
-      {/* Profile Update Dialog */}
-      <Dialog open={showProfileDialog} onOpenChange={setShowProfileDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Update Profile</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleProfileUpdate} className="space-y-4">
-            <div>
-              <label htmlFor="firstName" className="text-sm font-medium">
-                First Name
-              </label>
-              <Input
-                id="firstName"
-                value={userProfile.firstName}
-                onChange={(e) =>
-                  setUserProfile({ ...userProfile, firstName: e.target.value })
-                }
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="text-sm font-medium">
-                Last Name
-              </label>
-              <Input
-                id="lastName"
-                value={userProfile.lastName}
-                onChange={(e) =>
-                  setUserProfile({ ...userProfile, lastName: e.target.value })
-                }
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={userProfile.email}
-                onChange={(e) =>
-                  setUserProfile({ ...userProfile, email: e.target.value })
-                }
-                className="mt-1"
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Update Profile
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Password Update Dialog */}
-      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Change Password</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handlePasswordUpdate} className="space-y-4">
-            <div>
-              <label htmlFor="currentPassword" className="text-sm font-medium">
-                Current Password
-              </label>
-              <Input
-                id="currentPassword"
-                type="password"
-                value={passwordUpdate.currentPassword}
-                onChange={(e) =>
-                  setPasswordUpdate({
-                    ...passwordUpdate,
-                    currentPassword: e.target.value,
-                  })
-                }
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <label htmlFor="newPassword" className="text-sm font-medium">
-                New Password
-              </label>
-              <Input
-                id="newPassword"
-                type="password"
-                value={passwordUpdate.newPassword}
-                onChange={(e) =>
-                  setPasswordUpdate({
-                    ...passwordUpdate,
-                    newPassword: e.target.value,
-                  })
-                }
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
-                Confirm New Password
-              </label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={passwordUpdate.confirmPassword}
-                onChange={(e) =>
-                  setPasswordUpdate({
-                    ...passwordUpdate,
-                    confirmPassword: e.target.value,
-                  })
-                }
-                className="mt-1"
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Update Password
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* Remove Profile Update Dialog and Password Update Dialog */}
     </>
-  );
+  )
 }
 
