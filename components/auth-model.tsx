@@ -30,15 +30,12 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
     lastName: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    age: 0,
-    state: '',
     country: '',
-    pinCode: '',
+    state: '',
     address: '',
+    pin: '',
     profession: '',
-    gender: '',
-    mobileNo: ''
+    phone: ''
   })
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -76,10 +73,6 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (signupData.password !== signupData.confirmPassword) {
-      toast.error('Passwords do not match')
-      return
-    }
 
     setIsLoading(true)
 
@@ -211,23 +204,12 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
               {signupStep === 2 && (
                 <>
                   <div>
-                    <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
+                    <label htmlFor="country" className="text-sm font-medium">Country</label>
                     <Input
-                      id="confirmPassword"
-                      type="password"
+                      id="country"
                       required
-                      value={signupData.confirmPassword}
-                      onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="age" className="text-sm font-medium">Age</label>
-                    <Input
-                      id="age"
-                      type="number"
-                      required
-                      value={signupData.age}
-                      onChange={(e) => setSignupData({ ...signupData, age: Number(e.target.value) })}
+                      value={signupData.country}
+                      onChange={(e) => setSignupData({ ...signupData, country: e.target.value })}
                     />
                   </div>
                   <div>
@@ -240,37 +222,6 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     />
                   </div>
                   <div>
-                    <label htmlFor="country" className="text-sm font-medium">Country</label>
-                    <Input
-                      id="country"
-                      required
-                      value={signupData.country}
-                      onChange={(e) => setSignupData({ ...signupData, country: e.target.value })}
-                    />
-                  </div>
-                  <div className="flex justify-between">
-                    <Button onClick={prevStep} className="w-full">
-                      Previous
-                    </Button>
-                    <Button onClick={nextStep} className="w-full">
-                      Next
-                    </Button>
-                  </div>
-                </>
-              )}
-
-              {signupStep === 3 && (
-                <>
-                  <div>
-                    <label htmlFor="pinCode" className="text-sm font-medium">Pin Code</label>
-                    <Input
-                      id="pinCode"
-                      required
-                      value={signupData.pinCode}
-                      onChange={(e) => setSignupData({ ...signupData, pinCode: e.target.value })}
-                    />
-                  </div>
-                  <div>
                     <label htmlFor="address" className="text-sm font-medium">Address</label>
                     <Input
                       id="address"
@@ -279,6 +230,28 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       onChange={(e) => setSignupData({ ...signupData, address: e.target.value })}
                     />
                   </div>
+                  <div>
+                    <label htmlFor="pin" className="text-sm font-medium">Pin Code</label>
+                    <Input
+                      id="pin"
+                      required
+                      value={signupData.pin}
+                      onChange={(e) => setSignupData({ ...signupData, pin: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex justify-between space-x-4">
+                    <Button onClick={prevStep} className="flex-1">
+                      Previous
+                    </Button>
+                    <Button onClick={nextStep} className="flex-1">
+                      Next
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {signupStep === 3 && (
+                <>
                   <div>
                     <label htmlFor="profession" className="text-sm font-medium">Profession</label>
                     <Input
@@ -289,41 +262,19 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     />
                   </div>
                   <div>
-                    <label htmlFor="gender" className="text-sm font-medium">Gender</label>
+                    <label htmlFor="phone" className="text-sm font-medium">Phone</label>
                     <Input
-                      id="gender"
+                      id="phone"
                       required
-                      value={signupData.gender}
-                      onChange={(e) => setSignupData({ ...signupData, gender: e.target.value })}
+                      value={signupData.phone}
+                      onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
                     />
                   </div>
-                  <div className="flex justify-between">
-                    <Button onClick={prevStep} className="w-full">
+                  <div className="flex justify-between space-x-4">
+                    <Button onClick={prevStep} className="flex-1">
                       Previous
                     </Button>
-                    <Button onClick={nextStep} className="w-full">
-                      Next
-                    </Button>
-                  </div>
-                </>
-              )}
-
-              {signupStep === 4 && (
-                <>
-                  <div>
-                    <label htmlFor="mobileNo" className="text-sm font-medium">Mobile No</label>
-                    <Input
-                      id="mobileNo"
-                      required
-                      value={signupData.mobileNo}
-                      onChange={(e) => setSignupData({ ...signupData, mobileNo: e.target.value })}
-                    />
-                  </div>
-                  <div className="flex justify-between">
-                    <Button onClick={prevStep} className="w-full">
-                      Previous
-                    </Button>
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" className="flex-1" disabled={isLoading}>
                       {isLoading ? 'Signing up...' : 'Sign Up'}
                     </Button>
                   </div>

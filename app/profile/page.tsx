@@ -113,14 +113,11 @@ export default function ProfilePage() {
         return
       }
 
-      const response = await fetch(
-        "https://maple-server-e7ye.onrender.com/api/auth/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch("http://localhost:5000/api/user/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json()

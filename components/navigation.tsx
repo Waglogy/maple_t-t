@@ -42,23 +42,6 @@ export function Navigation() {
   const router = useRouter()
   const pathname = usePathname()
 
-  // Remove these state declarations
-  // const [userProfile, setUserProfile] = useState<UserProfile>({
-  //   firstName: '',
-  //   lastName: '',
-  //   email: ''
-  // })
-  // const [passwordUpdate, setPasswordUpdate] = useState<PasswordUpdate>({
-  //   currentPassword: '',
-  //   newPassword: '',
-  //   confirmPassword: ''
-  // })
-
-  // Remove these functions
-  // const handleProfileUpdate = async (e: React.FormEvent) => { ... }
-  // const handlePasswordUpdate = async (e: React.FormEvent) => { ... }
-
-  // Handle protected route access
   const handleProtectedRoute = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     e.preventDefault()
     if (!isAuthenticated) {
@@ -112,8 +95,8 @@ export function Navigation() {
 
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-black/75 backdrop-blur-md">
-        <nav className="container mx-auto px-2 h-24 flex items-center justify-between relative z-10">
+      <header className="fixed top-0 w-full md:w-[95%] z-50 bg-black/75 backdrop-blur-md rounded-lg mx-2 md:mx-8 my-2 shadow-lg transition-transform duration-300">
+        <nav className="container mx-auto px-2 md:px-4 py-2 h-24 flex items-center justify-between relative z-10">
           <Link href="/" className="flex items-center gap-2 min-w-max">
             <div className="relative w-[90px] h-[90px] flex-shrink-0">
               <Image
@@ -186,7 +169,7 @@ export function Navigation() {
 
           {/* Mobile Navigation */}
           <button
-            className="md:hidden"
+            className="md:hidden mr-4" // Added margin-left to shift the button to the right
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -274,8 +257,6 @@ export function Navigation() {
         onClose={() => setShowAuthModal(false)}
         onLoginSuccess={() => setShowAuthModal(false)}
       />
-
-      {/* Remove Profile Update Dialog and Password Update Dialog */}
     </>
   )
 }

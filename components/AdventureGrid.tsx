@@ -15,7 +15,7 @@ export default function AdventureGrid() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 w-full  ">
       <div className="text-center mb-8 mt-8">
         <h2 className="text-3xl font-bold">
           Sikkim: An <span className="text-[#f45201]">Adventure Paradise</span>

@@ -5,7 +5,7 @@ import FamousPlaces from "@/components/FamousPlaces";
 import AdventureGrid from "@/components/AdventureGrid";
 export default function AboutPage() {
   return (
-    <div className="pt-16">
+    <div className="">
       {/* Hero Section */}
       <section
         className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center"
@@ -22,8 +22,9 @@ export default function AboutPage() {
       </section>
 
       {/* Content Section */}
-
-      <AdventureGrid />
+      
+          <AdventureGrid />
+        
       {/* Famous Places Section */}
       <FamousPlaces />
     </div>
