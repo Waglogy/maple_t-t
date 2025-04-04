@@ -48,8 +48,8 @@ export default function AdventureGrid() {
             className="object-cover rounded-lg"
           />
           <div className="absolute inset-0 flex items-center flex-col justify-center">
-            <h3 className="text-[#f45201] text-xl font-bold">CAMPING</h3>
-            <p className="text-white text-sm">
+            <h3 className=" hidden md:block text-[#f45201] text-xl font-bold">CAMPING</h3>
+            <p className=" hidden md:block text-white text-sm">
               Fambangla Wild Life Sanctury, Ranke, Mastars, Yekteee, Yalli,
               Rolep
             </p>
@@ -76,8 +76,8 @@ export default function AdventureGrid() {
             className="object-cover rounded-lg"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <h3 className="text-[#f45201] text-xl font-bold">BIRD WATCHING</h3>
-            <p className="text-white text-sm">
+            <h3 className=" hidden md:block text-[#f45201] text-xl font-bold">BIRD WATCHING</h3>
+            <p className=" hidden md:block text-white text-sm">
               Chaya Tal, Uttrey, Kochepalast, Rinchapang, Varsey
             </p>
           </div>
@@ -92,8 +92,8 @@ export default function AdventureGrid() {
             className="object-cover rounded-lg"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <h3 className="text-[#f45201] text-xl font-bold">PARAGLIDING</h3>
-            <p className="text-white text-sm">
+            <h3 className=" hidden md:block text-[#f45201] text-xl font-bold">PARAGLIDING</h3>
+            <p className="hidden md:block text-white text-sm">
               Rasko,Reshithang near Gangtok,Pelling
             </p>
           </div>
@@ -106,8 +106,8 @@ export default function AdventureGrid() {
             className="object-cover rounded-lg"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <h3 className="text-[#f45201] text-xl font-bold"> TREKKING </h3>
-            <p className="text-white text-sm">
+            <h3 className=" hidden md:block text-[#f45201] text-xl font-bold"> TREKKING </h3>
+            <p className="hidden md:block text-white text-sm">
               Dzongri, Singalila Trek, Khadi, Tear Jurry
             </p>
           </div>
@@ -125,7 +125,7 @@ export default function AdventureGrid() {
           onClick={() => toggleExpand(0)}
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-semibold text-[#f45201]">
+            <h3 className=" text-2xl font-semibold text-[#f45201]">
               Adventure Activities in Sikkim
             </h3>
             <span
