@@ -51,16 +51,12 @@ interface BookingData {
 
 export default function BookingPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const packageId = searchParams.get('packageId');
-  const packageTitle = searchParams.get('title');
-
-  const [packageDetails, setPackageDetails] = useState<PackageDetails | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Set initial loading to true
+  const [packages, setPackages] = useState<PackageDetails[]>([]);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
   const [formData, setFormData] = useState<BookingFormData>({
-    package: packageId || '',
+    package: '', // Removed packageId dependency
     startDate: '',
     numberOfPeople: {
       adults: 1,
@@ -80,63 +76,30 @@ export default function BookingPage() {
   const [bookingId, setBookingId] = useState<string>('');
 
   useEffect(() => {
-    if (!packageId) {
-      toast.error('No package selected');
-      router.push('/packages');
-      return;
-    }
-
-    const fetchPackageDetails = async () => {
+    const fetchPackages = async () => {
       try {
-        const response = await fetch(`https://maple-server-e7ye.onrender.com/api/packages/${packageId}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch package details');
-        }
-        
+        const response = await fetch('https://maple-server-e7ye.onrender.com/api/packages');
         const data = await response.json();
-        
         if (data.success) {
-          setPackageDetails(data.data);
-          setFormData(prev => ({
-            ...prev,
-            package: data.data._id,
-            totalAmount: data.data.price.amount
-          }));
+          setPackages(data.data);
         } else {
-          throw new Error(data.message);
+          throw new Error('Failed to fetch packages');
         }
       } catch (error) {
-        toast.error('Failed to load package details');
-        router.push('/packages');
+        toast.error('Failed to load packages');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPackageDetails();
-  }, [packageId]);
-
-  useEffect(() => {
-    const fetchBookingData = async () => {
-      try {
-        // Your fetch logic here
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        if (err instanceof Error) {
-          console.error('Fetch error:', err.message);
-        }
-      }
-    };
-
-    fetchBookingData();
-  }, [router]); // Added router as dependency
+    fetchPackages();
+  }, []);
 
   const calculateTotalAmount = () => {
-    if (!packageDetails) return 0;
+    const selectedPackage = packages.find(pkg => pkg._id === formData.package);
+    if (!selectedPackage) return 0;
     const { adults, children } = formData.numberOfPeople;
-    return packageDetails.price.amount * (adults + (children * 0.5));
+    return selectedPackage.price.amount * (adults + (children * 0.5));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,16 +133,15 @@ export default function BookingPage() {
 
       if (data.success) {
         setBookingId(data.data._id);
-        // Store booking details in localStorage for payment reference
         localStorage.setItem('currentBooking', JSON.stringify({
           bookingId: data.data._id,
           amount: totalAmount,
-          packageTitle: packageTitle
+          packageTitle: formData.package // Adjusted to use formData
         }));
         setShowConfirmation(true);
         toast.success('Booking created successfully!');
       } else {
-throw new Error('Failed to create booking');
+        throw new Error('Failed to create booking');
       }
     } catch (error) {
       toast.error('Failed to create booking');
@@ -243,172 +205,174 @@ throw new Error('Failed to create booking');
     );
   }
 
-  return (<>
-  <section 
-  className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center" 
-  style={{ backgroundImage: "url('/3.png')" }}
->
+  return (
+    <>
+      <section 
+        className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center" 
+        style={{ backgroundImage: "url('/3.png')" }}
+      >
         <div className="absolute inset-0 flex items-center justify-center text-white">
           <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-6xl font-bold"> {packageTitle}</h1>
+            <h1 className="text-4xl md:text-6xl font-bold">Book Your Package</h1>
             <p className="text-xl max-w-2xl mx-auto">
               Let's plan your perfect journey together
             </p>
           </div>
         </div>
       </section>
-    <div className="max-w-4xl mx-auto p-6 ">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold mb-6">Book Your Package</h1>
+      <div className="max-w-4xl mx-auto p-6 ">
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h1 className="text-2xl font-bold mb-6">Select Your Package</h1>
 
-        {/* Package Summary */}
-        <div className="bg-gray-50 p-4 rounded-md mb-6">
-          <h2 className="text-lg font-semibold mb-2">{packageTitle}</h2>
-          {packageDetails && (
-            <div className="grid grid-cols-2 gap-4 text-sm">
+          {/* Package Selection */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Package</label>
+            <select
+              value={formData.package}
+              onChange={(e) => setFormData({ ...formData, package: e.target.value })}
+              required
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="" disabled>Select a package</option>
+              {packages.map(pkg => (
+                <option key={pkg._id} value={pkg._id}>
+                  {pkg.title} - {pkg.price.currency} {pkg.price.amount.toLocaleString()}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Start Date */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+              <input
+                type="date"
+                min={new Date().toISOString().split('T')[0]}
+                value={formData.startDate}
+                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                required
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+
+            {/* Number of People */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-600">Duration</p>
-                <p className="font-medium">{packageDetails.duration.days} Days, {packageDetails.duration.nights} Nights</p>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.numberOfPeople.adults}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    numberOfPeople: {
+                      ...formData.numberOfPeople,
+                      adults: parseInt(e.target.value)
+                    },
+                    totalAmount: calculateTotalAmount()
+                  })}
+                  required
+                  className="w-full p-2 border rounded-md"
+                />
               </div>
               <div>
-                <p className="text-gray-600">Price </p>
-                <p className="font-medium">{packageDetails.price.currency} {packageDetails.price.amount.toLocaleString()}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.numberOfPeople.children}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    numberOfPeople: {
+                      ...formData.numberOfPeople,
+                      children: parseInt(e.target.value)
+                    },
+                    totalAmount: calculateTotalAmount()
+                  })}
+                  className="w-full p-2 border rounded-md"
+                />
               </div>
             </div>
-          )}
+
+            {/* Contact Details */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                value={formData.contactDetails.email}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  contactDetails: { ...formData.contactDetails, email: e.target.value }
+                })}
+                required
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input
+                  type="tel"
+                  value={formData.contactDetails.phone}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    contactDetails: { ...formData.contactDetails, phone: e.target.value }
+                  })}
+                  required
+                  className="w-full p-2 border rounded-md"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Alternate Phone</label>
+                <input
+                  type="tel"
+                  value={formData.contactDetails.alternatePhone}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    contactDetails: { ...formData.contactDetails, alternatePhone: e.target.value }
+                  })}
+                  className="w-full p-2 border rounded-md"
+                />
+              </div>
+            </div>
+
+            {/* Special Requirements */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Special Requirements</label>
+              <textarea
+                value={formData.specialRequirements}
+                onChange={(e) => setFormData({ ...formData, specialRequirements: e.target.value })}
+                rows={3}
+                className="w-full p-2 border rounded-md"
+                placeholder="Any special requests or requirements..."
+              />
+            </div>
+
+            {/* Total Amount */}
+            <div className="border-t pt-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-gray-600">Total Amount</p>
+                  <p className="text-2xl font-bold">
+                    {packages.find(pkg => pkg._id === formData.package)?.price.currency} {calculateTotalAmount().toLocaleString()}
+                  </p>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-dark"
+                >
+                  Proceed to Payment
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Start Date */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-            <input
-              type="date"
-              min={new Date().toISOString().split('T')[0]}
-              value={formData.startDate}
-              onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              required
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-
-          {/* Number of People */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
-              <input
-                type="number"
-                min="1"
-                value={formData.numberOfPeople.adults}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  numberOfPeople: {
-                    ...formData.numberOfPeople,
-                    adults: parseInt(e.target.value)
-                  },
-                  totalAmount: calculateTotalAmount()
-                })}
-                required
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Children</label>
-              <input
-                type="number"
-                min="0"
-                value={formData.numberOfPeople.children}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  numberOfPeople: {
-                    ...formData.numberOfPeople,
-                    children: parseInt(e.target.value)
-                  },
-                  totalAmount: calculateTotalAmount()
-                })}
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
-          </div>
-
-          {/* Contact Details */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input
-              type="email"
-              value={formData.contactDetails.email}
-              onChange={(e) => setFormData({
-                ...formData,
-                contactDetails: { ...formData.contactDetails, email: e.target.value }
-              })}
-              required
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-              <input
-                type="tel"
-                value={formData.contactDetails.phone}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  contactDetails: { ...formData.contactDetails, phone: e.target.value }
-                })}
-                required
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Alternate Phone</label>
-              <input
-                type="tel"
-                value={formData.contactDetails.alternatePhone}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  contactDetails: { ...formData.contactDetails, alternatePhone: e.target.value }
-                })}
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
-          </div>
-
-          {/* Special Requirements */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Special Requirements</label>
-            <textarea
-              value={formData.specialRequirements}
-              onChange={(e) => setFormData({ ...formData, specialRequirements: e.target.value })}
-              rows={3}
-              className="w-full p-2 border rounded-md"
-              placeholder="Any special requests or requirements..."
-            />
-          </div>
-
-          {/* Total Amount */}
-          <div className="border-t pt-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-gray-600">Total Amount</p>
-                <p className="text-2xl font-bold">
-                  {packageDetails?.price.currency} {calculateTotalAmount().toLocaleString()}
-                </p>
-              </div>
-              <button
-                type="submit"
-                className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-dark"
-              >
-                Proceed to Payment
-              </button>
-            </div>
-          </div>
-        </form>
       </div>
-    </div>
 
-    {/* Render confirmation modal when showConfirmation is true */}
-    {showConfirmation && <BookingConfirmationModal />}
+      {/* Render confirmation modal when showConfirmation is true */}
+      {showConfirmation && <BookingConfirmationModal />}
     </>
   );
 }

@@ -96,12 +96,12 @@ export default function PackagesPage() {
     }
   }
 
-  const handleBookNow = (pkg: Package) => {
+  const handleBookNow = () => {
     if (!user) {
       setShowLoginDialog(true)
       return
     }
-    router.push(`/booking?packageId=${pkg._id}&title=${encodeURIComponent(pkg.title)}`)
+    router.push('/booking')
   }
 
   const handleDownloadBrochure = async (pdfUrl: string, filename: string) => {
@@ -305,7 +305,7 @@ export default function PackagesPage() {
                     // </button>
                   )} */}
                   <button
-                    onClick={() => handleBookNow(pkg)}
+                    onClick={handleBookNow} // Removed the package parameter
                     className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors"
                   >
                     Book Now
