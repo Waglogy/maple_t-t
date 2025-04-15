@@ -250,14 +250,15 @@ export default function PackagesPage() {
                 {pkg.inclusions && pkg.inclusions.length > 0 && (
                   <div className="mb-4">
                     <h4 className="font-semibold mb-2">Inclusions</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {pkg.inclusions[0].split('✅').filter(Boolean).map((item, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <span className="text-green-600">✅</span>
-                          {item.trim()}
-                        </li>
-                      ))}
-                    </ul>
+<ul className="text-sm text-gray-600 space-y-1">
+  {pkg.inclusions.map((item, index) => (
+    <li key={index} className="flex items-start gap-2">
+      <span className="text-green-600">✅</span>
+      {item.replace(/^✅\s*/, '')}
+    </li>
+  ))}
+</ul>
+
                   </div>
                 )}
 
@@ -265,14 +266,15 @@ export default function PackagesPage() {
                 {pkg.exclusions && pkg.exclusions.length > 0 && (
                   <div className="mb-4">
                     <h4 className="font-semibold mb-2">Exclusions</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {pkg.exclusions[0].split('❌').filter(Boolean).map((item, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <span className="text-red-600">❌</span>
-                          {item.trim()}
-                        </li>
-                      ))}
-                    </ul>
+                  <ul className="text-sm text-gray-600 space-y-1">
+  {pkg.exclusions.map((item, index) => (
+    <li key={index} className="flex items-start gap-2">
+      <span className="text-red-600">❌</span>
+      {item.replace(/^❌\s*/, '')}
+    </li>
+  ))}
+</ul>
+
                   </div>
                 )}
 
