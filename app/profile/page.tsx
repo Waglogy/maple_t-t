@@ -1,22 +1,27 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { toast } from "react-toastify"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Card } from "@/components/ui/card"
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Card } from "@/components/ui/card";
 
 interface UserProfile {
-  firstName: string
-  lastName: string
-  email: string
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 interface PasswordUpdate {
-  currentPassword: string
-  newPassword: string
-  confirmPassword: string
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 interface Booking {
@@ -35,6 +40,18 @@ interface Booking {
 }
 
 export default function ProfilePage() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Only access localStorage in the browser
+    if (typeof window !== "undefined") {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    }
+  }, []);
+
   const token = localStorage.getItem("token");
   console.log(token);
   if (!token) {
@@ -43,15 +60,15 @@ export default function ProfilePage() {
   }
 
   const [userProfile, setUserProfile] = useState<UserProfile>({
-    firstName: '',
-    lastName: '',
-    email: ''
+    firstName: "",
+    lastName: "",
+    email: "",
   });
 
   const [passwordUpdate, setPasswordUpdate] = useState<PasswordUpdate>({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -107,10 +124,10 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token");
       if (!token) {
-        toast.error('Please login again')
-        return
+        toast.error("Please login again");
+        return;
       }
 
       const response = await fetch("http://localhost:5000/api/user/profile", {
@@ -120,54 +137,59 @@ export default function ProfilePage() {
       });
 
       if (response.ok) {
-        const data = await response.json()
-        setUserProfile(data.data)
+        const data = await response.json();
+        setUserProfile(data.data);
       }
     } catch (error) {
-      console.error('Error fetching profile:', error)
+      console.error("Error fetching profile:", error);
     }
-  }
+  };
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (passwordUpdate.newPassword !== passwordUpdate.confirmPassword) {
-      toast.error('Passwords do not match')
-      return
+      toast.error("Passwords do not match");
+      return;
     }
 
     try {
-      const response = await fetch("https://maple-server-e7ye.onrender.com/api/user/password", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword: passwordUpdate.currentPassword,
-          newPassword: passwordUpdate.newPassword,
-        }),
-      });
+      const response = await fetch(
+        "https://maple-server-e7ye.onrender.com/api/user/password",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            currentPassword: passwordUpdate.currentPassword,
+            newPassword: passwordUpdate.newPassword,
+          }),
+        }
+      );
 
       if (response.ok) {
-        toast.success('Password updated successfully')
-        setShowPasswordDialog(false)
+        toast.success("Password updated successfully");
+        setShowPasswordDialog(false);
         setPasswordUpdate({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        })
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
       }
     } catch (error) {
-      toast.error('Error updating password')
+      toast.error("Error updating password");
     }
-  }
+  };
 
-  const [contactEmail, setContactEmail] = useState('')
-  const [contactMessage, setContactMessage] = useState('')
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
 
   const handleContactAdmin = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // Simulate contact submission
-    setContactMessage('Thank you for contacting us! We will reach you within an hour.')
-    setContactEmail('')
-  }
+    setContactMessage(
+      "Thank you for contacting us! We will reach you within an hour."
+    );
+    setContactEmail("");
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-8 my-24">
