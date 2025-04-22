@@ -136,7 +136,7 @@ export function Navigation() {
               href="/about"
               className="text-[#ffffff] hover:text-[#f45201] transition-colors"
             >
-              About us
+              Tourist spots
             </Link>
             <Link
               href="/packages"
@@ -211,7 +211,7 @@ export function Navigation() {
               className="text-lg font-medium text-[#ffffff] hover:text-[#f45201]"
               onClick={() => setIsOpen(false)}
             >
-              About Us
+              Tourist spots
             </Link>
             <Link
               href="/packages"
@@ -258,6 +258,6 @@ export function Navigation() {
         onLoginSuccess={() => setShowAuthModal(false)}
       />
     </>
-  )
+  );
 }
 
