@@ -41,71 +41,63 @@ interface Booking {
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // Only access localStorage in the browser
-    if (typeof window !== "undefined") {
-      const userData = localStorage.getItem("user");
-      if (userData) {
-        setUser(JSON.parse(userData));
-      }
-    }
-  }, []);
-
-  const token = localStorage.getItem("token");
-  console.log(token);
-  if (!token) {
-    toast.error("Please login again");
-    return;
-  }
-
+  const [token, setToken] = useState<string | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile>({
     firstName: "",
     lastName: "",
     email: "",
   });
-
   const [passwordUpdate, setPasswordUpdate] = useState<PasswordUpdate>({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
-
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
 
   useEffect(() => {
-    fetchProfile();
-    fetchBookings();
-  }, []);
+    // Initialize token and user data
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("token");
+      const storedUser = localStorage.getItem("user");
 
-  const fetchBookings = async () => {
-    setLoadingBookings(true);
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Token being sent:", token); // Add this for debugging
-      if (!token) {
+      if (storedToken) {
+        setToken(storedToken);
+      } else {
         toast.error("Please login again");
-        return;
       }
 
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchProfile();
+      fetchBookings();
+    }
+  }, [token]);
+
+  const fetchBookings = async () => {
+    if (!token) return;
+
+    setLoadingBookings(true);
+    try {
       const response = await fetch(
         "https://maple-server-e7ye.onrender.com/api/bookings/my-bookings",
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json", // Add this header
+            "Content-Type": "application/json",
           },
         }
       );
 
-      console.log("Response status:", response.status); // Add this for debugging
       if (response.ok) {
         const data = await response.json();
         setBookings(data.data);
@@ -123,18 +115,17 @@ export default function ProfilePage() {
   };
 
   const fetchProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Please login again");
-        return;
-      }
+    if (!token) return;
 
-      const response = await fetch("http://localhost:5000/api/user/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    try {
+      const response = await fetch(
+        "https://maple-server-e7ye.onrender.com/api/user/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -147,6 +138,8 @@ export default function ProfilePage() {
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token) return;
+
     if (passwordUpdate.newPassword !== passwordUpdate.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -157,7 +150,10 @@ export default function ProfilePage() {
         "https://maple-server-e7ye.onrender.com/api/user/password",
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({
             currentPassword: passwordUpdate.currentPassword,
             newPassword: passwordUpdate.newPassword,
@@ -179,17 +175,23 @@ export default function ProfilePage() {
     }
   };
 
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactMessage, setContactMessage] = useState("");
-
   const handleContactAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate contact submission
     setContactMessage(
       "Thank you for contacting us! We will reach you within an hour."
     );
     setContactEmail("");
   };
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please login to view your profile</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4 space-y-8 my-24">
