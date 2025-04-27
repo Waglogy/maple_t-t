@@ -31,13 +31,13 @@ const sikkimData: Record<string, DistrictData> = {
         name: "Yumthang Valley",
         description:
           "Known as the 'Valley of Flowers', Yumthang is a paradise for nature lovers. It is home to the Shingba Rhododendron Sanctuary, featuring over 24 species of rhododendrons. The valley transforms into a colorful carpet of flowers from April to June. Yumthang also has natural hot springs, believed to have medicinal properties, and offers breathtaking views of snow-capped peaks, making it a must-visit for travelers seeking natural beauty and tranquility.",
-        coordinates: { x: 500, y: 150 },
+        coordinates: { x: 500, y: 120 },
       },
       {
         name: "Lachen",
         description:
           "A scenic mountain village and the gateway to Gurudongmar Lake. Lachen is home to the Lachen Monastery, which reflects the traditional Tibetan Buddhist culture. The village hosts the annual 'Thanka' festival, which showcases Sikkimese traditions through dance, music, and rituals. It serves as a base for treks to Green Lake and Chopta Valley, offering mesmerizing views of the Himalayan ranges.",
-        coordinates: { x: 400, y: 150 },
+        coordinates: { x: 400, y: 100 },
       },
       {
         name: "Gurudongmar Lake",
@@ -49,7 +49,7 @@ const sikkimData: Record<string, DistrictData> = {
         name: "Lachung",
         description:
           "A picturesque mountain village with rich Tibetan-Buddhist culture, Lachung is famous for its apple orchards and the centuries-old Lachung Monastery. It serves as a gateway to Yumthang Valley and Zero Point. The village celebrates the annual Saga Dawa festival with traditional mask dances, showcasing the vibrant culture of the indigenous Lepcha and Bhutia communities.",
-        coordinates: { x: 560, y: 220 },
+        coordinates: { x: 510, y: 140 },
       },
     ],
   },
@@ -62,19 +62,19 @@ const sikkimData: Record<string, DistrictData> = {
         name: "Tsomgo Lake",
         description:
           "A glacial lake located at an altitude of 12,400 ft, Tsomgo Lake is sacred to the local Sikkimese people. During winter, the lake freezes completely, while in summer, it reflects the surrounding snow-capped peaks. The lake is associated with ancient myths and is said to change colors based on spiritual vibrations. Nearby, visitors can experience Yak rides and enjoy the local delicacy, 'thukpa'.",
-        coordinates: { x: 600, y: 500 },
+        coordinates: { x: 560, y: 400 },
       },
       {
         name: "Nathula Pass",
         description:
           "A historic trade route on the Indo-China border, Nathula was once part of the ancient Silk Route. It stands at 14,140 ft and offers breathtaking views of the Tibetan plateau. The pass is home to the Baba Harbhajan Singh Mandir, dedicated to an Indian soldier believed to protect the region even after his death. Nathula is an important symbol of India's border history and military heritage.",
-        coordinates: { x: 600, y: 530 },
+        coordinates: { x: 600, y: 410 },
       },
       {
         name: "Rumtek Monastery",
         description:
           "The largest and most significant monastery in Sikkim, Rumtek Monastery serves as the seat of the Karma Kagyu lineage of Tibetan Buddhism. It houses rare artifacts, intricate murals, and the sacred Golden Stupa. The monastery is known for its grand masked dances during the annual 'Losar' festival, where monks perform religious dances symbolizing the victory of good over evil.",
-        coordinates: { x: 420, y: 530 },
+        coordinates: { x: 500, y: 440 },
       },
     ],
   },
@@ -93,7 +93,7 @@ const sikkimData: Record<string, DistrictData> = {
         name: "Temi Tea Garden",
         description:
           "The only tea estate in Sikkim, Temi Tea Garden is known for producing high-quality organic tea. The lush green plantation, established in 1969, provides scenic views of the surrounding Himalayan peaks. The garden follows sustainable farming practices, and visitors can take guided tours to understand the tea-making process while enjoying freshly brewed tea.",
-        coordinates: { x: 340, y: 600 },
+        coordinates: { x: 340, y: 460 },
       },
       {
         name: "Ravangla",
@@ -124,7 +124,7 @@ const sikkimData: Record<string, DistrictData> = {
         name: "Yuksom",
         description:
           "The first capital of Sikkim, Yuksom is a historical town where the first Chogyal (king) of Sikkim was crowned in 1642. The town is the starting point for treks to Dzongri and Goecha La. Yuksom is home to the Dubdi Monastery, the oldest monastery in Sikkim, and is a center of Buddhist heritage and eco-tourism.",
-        coordinates: { x: 250, y: 600 },
+        coordinates: { x: 250, y: 330 },
       },
     ],
   },
@@ -137,7 +137,7 @@ interface SikkimMapProps {
 
 export default function SikkimInteractiveMap({
   className = "",
-  mapImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Blue%20And%20White%20Modern%20And%20Illustrated%20Sikkim%20Travel%20Poster%20(3)-WJlAXctgXAtU5WE5jYfbAUWxiZl2uP.png",
+  mapImage = "/new-map.png",
 }: SikkimMapProps) {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null)

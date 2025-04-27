@@ -20,6 +20,10 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <div className=" max-w-4xl mx-auto p-6">
+        <FamousPlaces />
+      </div>
+
       {/* Content Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 grid-rows-none lg:grid-rows-5 gap-4 max-w-4xl mx-auto p-6">
         {/* Heading + Long Content */}
@@ -191,9 +195,6 @@ export default function AboutPage() {
       </div>
 
       {/* Famous Places Section */}
-      <div className=" max-w-4xl mx-auto p-6">
-        <FamousPlaces />
-      </div>
     </div>
   );
 }
