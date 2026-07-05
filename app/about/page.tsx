@@ -1,6 +1,3 @@
-"use client";
-
-import Image from "next/image";
 import FamousPlaces from "@/components/FamousPlaces";
 export default function AboutPage() {
   return (
