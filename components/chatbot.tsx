@@ -30,7 +30,7 @@ export function Chatbot() {
       {/* Chatbot Popup */}
       <Card
         className={cn(
-          "absolute bottom-20 right-0 w-96 h-[550px] transition-all duration-300 border border-[#f45201]/20 shadow-xl",
+          "absolute bottom-20 right-0 w-[calc(100vw-2rem)] max-w-96 h-[70vh] max-h-[550px] transition-all duration-300 border border-[#f45201]/20 shadow-xl",
           isOpen
             ? "translate-y-0 opacity-100"
             : "translate-y-4 opacity-0 pointer-events-none"
@@ -51,7 +51,7 @@ export function Chatbot() {
           <iframe
             src={botpressUrl}
             title="BotPress Chatbot"
-            className="w-full h-[500px] border-none"
+            className="w-full h-full border-none"
             allow="microphone; autoplay"
           ></iframe>
         </CardContent>

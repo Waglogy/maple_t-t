@@ -1,14 +1,31 @@
 import FamousPlaces from "@/components/FamousPlaces";
+import type { Metadata } from "next";
+import { buildMetadata, breadcrumbLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Sikkim Tourist Places & Top Destinations",
+  description:
+    "Explore the best tourist places in Sikkim with Maple Leaf Tours — Gangtok, Tsomgo Lake, Baba Mandir, Nathula Pass, Lachung, Lachen, Gurudongmar Lake, Yumthang Valley and more. Plan your Sikkim trip with local experts.",
+  path: "/about",
+});
+
 export default function AboutPage() {
   return (
     <div className="">
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", path: "/" },
+          { name: "Sikkim Tourist Places", path: "/about" },
+        ])}
+      />
       {/* Hero Section */}
       <section
         className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center"
-        style={{ backgroundImage: "url('/3.png')" }}
+        style={{ backgroundImage: "url('/3.webp')" }}
       >
         <div className="absolute inset-0 flex items-center justify-center text-white">
-          <div className="text-center space-y-4 px-4">
+          <div className="text-center space-y-4 px-4 w-full max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-bold">Tourist Spots</h1>
             <p className="text-lg md:text-xl max-w-2xl mx-auto">
               Explore the breathtaking destinations of Sikkim
@@ -184,7 +201,7 @@ export default function AboutPage() {
         {/* Image: Scenic View */}
         <div className="lg:row-span-3 lg:col-start-3 lg:row-start-1">
           <img
-            src="/5.png"
+            src="/5.webp"
             alt="Scenic view of Sikkim"
             className="w-full h-full object-cover rounded"
           />

@@ -95,7 +95,7 @@ export function Navigation() {
 
   return (
     <>
-      <header className="fixed top-0 w-full md:w-[95%] z-50 bg-black/75 backdrop-blur-md rounded-lg mx-2 md:mx-8 my-2 shadow-lg transition-transform duration-300">
+      <header className="fixed top-0 left-2 right-2 md:left-8 md:right-8 z-50 bg-black/75 backdrop-blur-md rounded-lg my-2 shadow-lg transition-transform duration-300">
         <nav className="container mx-auto px-2 md:px-4 py-2 h-24 flex items-center justify-between relative z-10">
           <Link href="/" className="flex items-center gap-2 min-w-max">
             <div className="relative w-[90px] h-[90px] flex-shrink-0">

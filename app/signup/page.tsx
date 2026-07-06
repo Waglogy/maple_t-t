@@ -104,7 +104,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
       <div className="fixed inset-0 z-0" 
         style={{ 
-          backgroundImage: 'url("/1.png")', 
+          backgroundImage: 'url("/1.webp")', 
           backgroundSize: 'cover', 
           backgroundPosition: 'center', 
           opacity: '0.15' 

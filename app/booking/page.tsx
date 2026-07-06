@@ -209,10 +209,10 @@ export default function BookingPage() {
     <>
       <section 
         className="relative h-[60vh] bg-gradient-to-r from-[#010001] to-[#f45201] bg-cover bg-center" 
-        style={{ backgroundImage: "url('/3.png')" }}
+        style={{ backgroundImage: "url('/3.webp')" }}
       >
         <div className="absolute inset-0 flex items-center justify-center text-white">
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 w-full max-w-4xl px-4">
             <h1 className="text-4xl md:text-6xl font-bold">Book Your Package</h1>
             <p className="text-xl max-w-2xl mx-auto">
               Let's plan your perfect journey together

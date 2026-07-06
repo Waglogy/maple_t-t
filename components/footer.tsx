@@ -9,7 +9,7 @@ export function Footer() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'url("/1.png")',
+          backgroundImage: 'url("/1.webp")',
           backgroundSize: "cover",
           backgroundPosition: "center",
           opacity: "0.15",

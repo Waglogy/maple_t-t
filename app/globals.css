@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-first safety net: never allow a stray wide element to create
+   horizontal scroll / reveal the page background on the side. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

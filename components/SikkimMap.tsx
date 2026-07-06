@@ -161,8 +161,8 @@ For tourists, the recommended seasons are between mid-February and late May, dur
       <div className="grid md:grid-cols-2 gap-6">
         <div className="relative">
           {/* Map Container */}
-          <div className="relative w-[400px] h-[600px] mx-auto rounded-lg overflow-hidden 
-                sm:w-[400px] md:w-[450px] lg:w-[500px]">
+          <div className="relative w-full max-w-[400px] h-[600px] mx-auto rounded-lg overflow-hidden
+                md:max-w-[450px] lg:max-w-[500px]">
 
             {/* Background Image */}
             <img

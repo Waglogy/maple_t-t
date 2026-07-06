@@ -39,19 +39,19 @@ interface Package {
 
 const slides = [
   {
-    url: "/1.png",
+    url: "/1.webp",
     title: "Discover Sacred Sikkim",
     description: "Journey through ancient monasteries and mystical landscapes of the Himalayan realm",
     buttonText: "Explore Sacred Tours"
   },
   {
-    url: "/2.png",
+    url: "/2.webp",
     title: "Cultural Heritage Tours",
     description: "Experience the living traditions of Lepcha, Bhutia, and Nepali communities",
     buttonText: "View Heritage Packages"
   },
   {
-    url: "/3.png",
+    url: "/3.webp",
     title: "Adventure in Paradise",
     description: "Trek through pristine valleys, serene lakes, and majestic mountain trails",
     buttonText: "Find Adventure Tours"
@@ -100,9 +100,14 @@ export default function Home() {
       <section className="relative h-[100vh]">
         <Carousel slides={slides} />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-transparent flex items-center justify-center">
-          <div className="text-center text-white space-y-6 px-4 max-w-4xl">
+          <div className="text-center text-white space-y-6 px-4 w-full max-w-4xl">
             <div className="space-y-2">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                {/* Brand + location kept crawlable for SEO without altering the hero design */}
+                <span className="sr-only">
+                  Maple Leaf Tours &amp; Travels — Sikkim &amp; Gangtok Tour
+                  Operator.{" "}
+                </span>
                 {slides[0].title}
               </h1>
             </div>
@@ -207,7 +212,7 @@ export default function Home() {
                 </div>
                 <div className="relative h-[200px] rounded-sm shadow-lg overflow-hidden  hover:shadow-xl transition-all duration-300">
                   <Image
-                    src="/9.png"
+                    src="/9.webp"
                     alt="Luxury vehicle interior"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-500"

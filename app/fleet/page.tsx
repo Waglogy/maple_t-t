@@ -1,5 +1,15 @@
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import type { Metadata } from "next"
+import { buildMetadata, breadcrumbLd } from "@/lib/seo"
+import { JsonLd } from "@/components/seo/json-ld"
+
+export const metadata: Metadata = buildMetadata({
+  title: "Car & Cab Rental in Sikkim — Our Fleet",
+  description:
+    "Comfortable, well-maintained cars and cabs for Sikkim tours with experienced local drivers. Book SUVs and sedans for Gangtok, North Sikkim sightseeing and airport transfers with Maple Leaf Tours.",
+  path: "/fleet",
+})
 
 const vehicles = [
   {
@@ -63,6 +73,12 @@ const vehicles = [
 export default function FleetPage() {
   return (
     <div className="pt-24 pb-20 mt-10">
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", path: "/" },
+          { name: "Our Fleet", path: "/fleet" },
+        ])}
+      />
       <div className="container mx-auto px-4">
         <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
           <span className="gradient-text">Our Luxury Fleet</span>
