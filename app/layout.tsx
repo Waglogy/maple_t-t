@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SITE, buildMetadata, travelAgencyLd, websiteLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
+import { PublicOnly } from "@/components/public-only";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -60,10 +61,14 @@ export default function RootLayout({
         {/* Site-wide structured data: business entity + website */}
         <JsonLd data={[travelAgencyLd(), websiteLd()]} />
         <AuthProvider>
-          <Navigation />
+          <PublicOnly>
+            <Navigation />
+          </PublicOnly>
           <main>{children}</main>
-          <Chatbot />
-          <Footer />
+          <PublicOnly>
+            <Chatbot />
+            <Footer />
+          </PublicOnly>
           <ToastContainer />
         </AuthProvider>
       </body>
